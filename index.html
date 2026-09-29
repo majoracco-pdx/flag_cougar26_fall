@@ -1,0 +1,2654 @@
+<html lang="ja"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>moments of glory</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@600;700;800&amp;family=Noto+Sans+JP:wght@400;500;700&amp;display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --green: #154733;
+  --green-dark: #0b3322;
+  --yellow: #fee123;
+  --pale: #f1f6f2;
+  --border: #d8e4db;
+  --text: #172c3a;
+  --muted: #637580;
+  font-family: "Barlow", "Noto Sans JP", system-ui, sans-serif;
+  color: var(--text);
+  background: white;
+}
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 300px; background: white; }
+button, input, select { font: inherit; }
+button { cursor: pointer; }
+button:disabled { cursor: wait; opacity: .55; }
+[hidden] { display: none !important; }
+h1, h2, h3, .button { font-family: "Barlow Condensed", "Noto Sans JP", sans-serif; }
+
+.topbar {
+  padding: 15px 16px;
+  color: white;
+  background: var(--green);
+  border-bottom: 5px solid var(--yellow);
+}
+.topbar-inner {
+  max-width: 1080px;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+h1 { margin: 0; font-size: clamp(23px, 4vw, 31px); line-height: 1.1; }
+.subtitle { margin: 4px 0 0; color: #e2eee6; font-size: 13px; }
+.header-tools { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.language-switch { display: flex; padding: 3px; border-radius: 10px; background: var(--green-dark); }
+.language-switch button {
+  min-height: 36px; padding: 5px 9px; border: 0; border-radius: 8px;
+  color: white; background: transparent; font-size: 12px; font-weight: 700;
+}
+.language-switch button.active { color: var(--green); background: white; }
+.save-status {
+  padding: 6px 9px; border-radius: 999px; color: var(--green-dark);
+  background: var(--yellow); font-size: 11px; font-weight: 700;
+}
+.save-status.error { color: white; background: #9a342d; }
+
+main { max-width: 1080px; margin: auto; padding: 15px; }
+.card {
+  margin-bottom: 14px; padding: 16px;
+  border: 1px solid var(--border); border-radius: 14px;
+  background: white; box-shadow: 0 3px 12px rgba(20,45,65,.035);
+}
+.card.accent { border-top: 5px solid var(--yellow); }
+h2 { margin: 0; color: var(--green); font-size: 22px; }
+h3 { margin: 15px 0 8px; color: var(--green); font-size: 16px; }
+.help { margin: 6px 0 12px; color: var(--muted); font-size: 13px; line-height: 1.5; }
+.small-note { color: var(--muted); font-size: 12px; line-height: 1.5; }
+.section-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+.badge {
+  flex: 0 0 auto; padding: 6px 10px; border-radius: 999px;
+  color: var(--green-dark); background: var(--yellow);
+  font-size: 12px; font-weight: 800; white-space: nowrap;
+}
+.metrics { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px; margin: 13px 0; }
+.metric { min-width: 0; padding: 11px; border: 1px solid var(--border); border-radius: 10px; background: var(--pale); }
+.metric span { display: block; color: var(--muted); font-size: 12px; }
+.metric strong { display: block; margin-top: 4px; color: var(--green); font-size: 21px; }
+
+input, select {
+  display: block; width: 100%; min-height: 42px; margin-top: 4px;
+  padding: 8px 10px; border: 1px solid #cbd7df; border-radius: 8px;
+  color: var(--text); background: white; font-size: 15px;
+}
+input:focus, select:focus { outline: 3px solid #d9e9dd; border-color: var(--green); }
+label { display: block; color: #405561; font-size: 12px; }
+.button {
+  min-height: 40px; padding: 7px 11px; border: 1px solid #cbd7df;
+  border-radius: 8px; color: #203846; background: white; font-weight: 700;
+}
+.button-primary { border-color: var(--green); color: white; background: var(--green); }
+.button-primary:hover:not(:disabled) { background: var(--green-dark); }
+.button-secondary { border-color: #b9cbbd; color: var(--green); background: var(--pale); }
+.button-danger { border-color: #e0bbb7; color: #963a33; background: #fffafa; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.actions .wide { flex: 1 1 100%; min-height: 48px; font-size: 17px; }
+
+.message { margin: 8px 0 0; font-size: 13px; line-height: 1.5; }
+.message:empty { display: none; }
+.message.error { color: #a2322b; }
+.message.success { color: #237443; }
+.message.info { color: #4c6575; }
+.notice {
+  margin: 9px 0; padding: 9px 11px; border: 1px solid #f0d99b;
+  border-radius: 9px; color: #6c5110; background: #fff8e4;
+  font-size: 13px; line-height: 1.5;
+}
+.notice.good { border-color: #c9dfce; color: var(--green); background: var(--pale); }
+
+.table-scroll { width: 100%; overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+table.wide-table { min-width: 570px; }
+table.detail-table { min-width: 430px; }
+th, td { padding: 8px 7px; border-bottom: 1px solid #e6edf1; text-align: center; }
+th { color: var(--green-dark); background: var(--pale); font-size: 12px; }
+td.name-cell, th.name-cell { text-align: left; }
+td.low { color: var(--green-dark); background: #fff2a5; font-weight: 800; }
+tfoot th, tfoot td { border-top: 2px solid var(--green); background: var(--pale); font-weight: 800; }
+.caption { padding: 6px 3px; color: var(--muted); text-align: left; font-size: 12px; }
+
+.candidates { display: grid; grid-template-columns: repeat(auto-fit,minmax(165px,1fr)); gap: 8px; }
+.candidate { padding: 10px; border: 1px solid var(--border); border-radius: 10px; background: #fbfdfb; }
+.candidate strong { color: var(--green); }
+.candidate p { margin: 5px 0 0; font-size: 12px; line-height: 1.45; }
+.candidate .names { font-size: 13px; font-weight: 650; overflow-wrap: anywhere; }
+
+.game-list { display: grid; gap: 8px; }
+.game-row {
+  display: flex; justify-content: space-between; align-items: center; gap: 10px;
+  padding: 10px 11px; border: 1px solid var(--border); border-radius: 10px;
+  background: #fbfdfb;
+}
+.game-row strong { display: block; color: var(--green); }
+.game-row small { display: block; margin-top: 3px; color: var(--muted); font-size: 12px; }
+
+.game-nav { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
+.game-nav h2 { margin-top: 7px; }
+.game-nav label { width: min(100%, 250px); }
+
+.field {
+  position: relative; width: min(100%, 520px); min-height: 325px;
+  margin: 14px auto; overflow: hidden; aspect-ratio: .9/1;
+  border: 6px solid var(--yellow); border-radius: 15px;
+  background-color: #14713f;
+  background-image: repeating-linear-gradient(
+    to bottom, transparent 0, transparent 58px,
+    rgba(254,225,35,.18) 59px, transparent 61px
+  );
+}
+.field::before {
+  position: absolute; top: 12%; bottom: 12%; left: 50%;
+  width: 1px; content: ""; background: rgba(255,255,255,.22);
+}
+.endzone { position: absolute; left: 0; width: 100%; height: 12%; background: rgba(20,69,77,.2); }
+.endzone.top { top: 0; border-bottom: 1px solid rgba(255,255,255,.55); }
+.endzone.bottom { bottom: 0; border-top: 1px solid rgba(255,255,255,.55); }
+.scrimmage { position: absolute; top: 38%; left: 5%; width: 90%; border-top: 1px dashed rgba(254,225,35,.8); }
+.attack {
+  position: absolute; top: 2%; left: 50%; transform: translateX(-50%);
+  padding: 3px 8px; border: 1px solid var(--yellow); border-radius: 99px;
+  color: white; background: var(--green-dark); font-size: 11px; font-weight: 800;
+}
+.markers { position: absolute; inset: 0; }
+.spot-wrap {
+  position: absolute; z-index: 2; width: clamp(58px,17vw,84px);
+  height: 70px; transform: translate(-50%,-50%);
+}
+.spot {
+  display: flex; width: 100%; height: 100%; flex-direction: column;
+  justify-content: center; align-items: center; gap: 2px; padding: 4px 3px;
+  overflow: hidden; border: 2px solid #d8e4e8; border-radius: 13px;
+  color: #183547; background: white; box-shadow: 0 3px 8px rgba(10,40,30,.2);
+}
+.spot.touched { border-color: var(--yellow); color: var(--green-dark); background: var(--yellow); }
+.spot.qb { outline: 3px solid white; }
+.spot.carry { box-shadow: 0 0 0 3px var(--yellow), 0 3px 8px rgba(10,40,30,.2); }
+.spot-letter { color: #55707d; font-size: 10px; font-weight: 800; }
+.spot-name { max-width: 100%; overflow: hidden; font-size: 12px; font-weight: 800; text-overflow: ellipsis; white-space: nowrap; }
+.spot-note { color: #586d78; font-size: 9px; }
+.spot-edit {
+  position: absolute; top: -7px; right: -7px; width: 24px; min-height: 24px;
+  padding: 0; border: 2px solid white; border-radius: 50%;
+  color: white; background: var(--green); font-weight: 800;
+}
+.roles { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 9px; max-width: 520px; margin: 12px auto; }
+.role-note { max-width: 520px; margin: 0 auto 10px; color: var(--muted); font-size: 12px; line-height: 1.45; }
+.touch-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; max-width: 520px; margin: 0 auto; }
+.touch-row span { color: var(--muted); font-size: 12px; }
+
+details.card { padding: 0; }
+summary { padding: 13px 16px; color: var(--green); cursor: pointer; font-family: "Barlow Condensed","Noto Sans JP",sans-serif; font-weight: 800; font-size: 18px; }
+.details-body { padding: 0 16px 15px; }
+.baseline-row { display: grid; grid-template-columns: minmax(100px,1fr) 95px 110px; gap: 7px; align-items: center; margin: 7px 0; }
+.baseline-row input { margin: 0; }
+
+.medal-picks { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 9px; }
+.profile-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+.profile-metric { padding: 10px; border: 1px solid var(--border); border-radius: 9px; background: var(--pale); }
+.profile-metric span { display: block; color: var(--muted); font-size: 12px; }
+.profile-metric strong { display: block; margin-top: 4px; color: var(--green); font-size: 21px; }
+.profile-dialog, .picker-dialog {
+  width: min(700px,calc(100% - 22px)); max-height: 88vh; padding: 0;
+  overflow: auto; border: 1px solid var(--border); border-radius: 15px;
+  background: white; box-shadow: 0 15px 50px rgba(0,0,0,.25);
+}
+.picker-dialog { width: min(430px,calc(100% - 22px)); }
+.profile-dialog::backdrop, .picker-dialog::backdrop { background: rgba(12,29,39,.55); }
+.dialog-head {
+  position: sticky; top: 0; z-index: 2; display: flex;
+  justify-content: space-between; align-items: center; gap: 9px;
+  padding: 12px 14px; border-bottom: 1px solid var(--border); background: white;
+}
+.dialog-head h2 { font-size: 22px; }
+.dialog-content, .picker-options { padding: 13px 14px 15px; }
+.picker-options { display: grid; gap: 7px; }
+.picker-choice {
+  min-height: 43px; padding: 8px 10px; border: 1px solid #d7e0e5;
+  border-radius: 8px; color: var(--green); background: white; text-align: left;
+}
+.picker-choice:disabled { color: #73828b; background: #f4f6f7; }
+.profile-area-list { display: flex; flex-wrap: wrap; gap: 6px; }
+.profile-area-chip { padding: 6px 8px; border: 1px solid var(--border); border-radius: 8px; color: var(--green); background: var(--pale); font-size: 12px; }
+
+.footer { color: var(--muted); font-size: 12px; line-height: 1.5; }
+@media(max-width:640px) {
+  .topbar-inner { align-items: flex-start; flex-direction: column; }
+  main { padding: 10px; }
+  .card { padding: 13px; }
+  details.card { padding: 0; }
+  .details-body { padding: 0 13px 13px; }
+  summary { padding: 12px 13px; }
+  .game-nav { align-items: flex-start; flex-direction: column; }
+}
+@media(max-width:420px) {
+  .metrics, .roles, .medal-picks, .profile-grid { grid-template-columns: 1fr; }
+  .game-row { align-items: flex-start; flex-direction: column; }
+  .game-row button { width: 100%; }
+  .baseline-row { grid-template-columns: minmax(80px,1fr) 75px 90px; }
+}
+/* iPhone / iPad：文字とタップ領域を大きくする */
+@media (max-width: 1024px), (pointer: coarse) {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  .topbar {
+    padding: 18px 16px;
+  }
+
+  h1 {
+    font-size: clamp(28px, 5vw, 36px);
+  }
+
+  h2 {
+    font-size: 27px;
+  }
+
+  h3,
+  summary {
+    font-size: 21px;
+  }
+
+  .subtitle,
+  .help,
+  label {
+    font-size: 16px;
+    line-height: 1.55;
+  }
+
+  .small-note,
+  .footer,
+  .caption {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  input,
+  select {
+    min-height: 50px;
+    font-size: 16px; /* iPhoneで入力欄をタップした際の画面拡大を防ぎます */
+  }
+
+  .button {
+    min-height: 48px;
+    padding: 10px 14px;
+    font-size: 16px;
+  }
+
+  .language-switch button {
+    min-width: 52px;
+    min-height: 44px;
+    font-size: 15px;
+  }
+
+  .save-status,
+  .badge {
+    padding: 8px 11px;
+    font-size: 13px;
+  }
+
+  .metric {
+    padding: 14px;
+  }
+
+  .metric span {
+    font-size: 14px;
+  }
+
+  .metric strong {
+    font-size: 25px;
+  }
+
+  .candidate strong {
+    font-size: 19px;
+  }
+
+  .candidate p,
+  .game-row small {
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  table {
+    font-size: 15px;
+  }
+
+  th {
+    font-size: 14px;
+  }
+
+  th,
+  td {
+    padding: 12px 10px;
+  }
+
+  table.wide-table {
+    min-width: 620px;
+  }
+
+  table.detail-table {
+    min-width: 480px;
+  }
+
+  .spot-wrap {
+    width: clamp(64px, 9vw, 84px);
+    height: 76px;
+  }
+
+  .spot-name {
+    font-family: "Barlow Condensed", "Noto Sans JP", sans-serif;
+    font-size: 15px;
+  }
+
+  .spot-note {
+    font-size: 11px;
+  }
+
+  .spot-edit {
+    width: 36px;
+    min-height: 36px;
+    font-size: 17px;
+  }
+
+  .role-note {
+    font-size: 14px;
+  }
+}
+
+/* iPhoneなどの幅が狭い画面 */
+@media (max-width: 600px) {
+  main {
+    padding: 11px;
+  }
+
+  .card {
+    padding: 15px;
+  }
+
+  .metrics,
+  .roles,
+  .medal-picks,
+  .profile-grid,
+  .candidates {
+    grid-template-columns: 1fr;
+  }
+
+  .field {
+    min-height: 360px;
+  }
+
+  .spot-wrap {
+    width: clamp(62px, 18vw, 76px);
+    height: 76px;
+  }
+
+  .game-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .game-row .button {
+    width: 100%;
+  }
+
+  .profile-dialog {
+    width: 100%;
+    max-width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    max-height: 100dvh;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+  }
+}
+/* iPhone / iPad向け：表を読みやすくする */
+@media (max-width: 820px), (pointer: coarse) {
+  .table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  table {
+    font-size: 17px;
+    line-height: 1.4;
+  }
+
+  th {
+    padding: 13px 10px;
+    font-size: 15px;
+    line-height: 1.35;
+  }
+
+  td {
+    padding: 14px 10px;
+    font-size: 17px;
+  }
+
+  /* 全員分のサマリー：横にスワイプして見られる幅にする */
+  #season-table table.wide-table {
+    min-width: 700px;
+  }
+
+  /* 日別・過去分の表も文字サイズを保つ */
+  #historical-table table.detail-table,
+  #day-table table.detail-table {
+    min-width: 540px;
+  }
+
+  /* 横にスクロールしても選手名の列は固定 */
+  #season-table table.wide-table thead th:first-child,
+  #season-table table.wide-table tbody td:first-child,
+  #season-table table.wide-table tfoot th:first-child {
+    position: sticky;
+    left: 0;
+  }
+
+  #season-table table.wide-table thead th:first-child,
+  #season-table table.wide-table tfoot th:first-child {
+    z-index: 3;
+    background: var(--pale);
+  }
+
+  #season-table table.wide-table tbody td:first-child {
+    z-index: 2;
+    background: #fff;
+    box-shadow: 2px 0 4px rgba(20, 45, 65, .10);
+  }
+
+  /* 選手個人のサマリー表は画面幅に収める */
+  #profile-dialog table.detail-table {
+    width: 100%;
+    min-width: 100%;
+    table-layout: fixed;
+  }
+
+  #profile-dialog table.detail-table th,
+  #profile-dialog table.detail-table td {
+    padding: 11px 5px;
+    font-size: 14px;
+    overflow-wrap: anywhere;
+  }
+
+  /* 過去の数字を入力する欄も押しやすく */
+  #historical-table input {
+    min-height: 48px;
+    font-size: 18px;
+    text-align: center;
+  }
+
+  #season-table td button {
+    min-height: 44px;
+    font-size: 15px;
+  }
+}
+/* iPhone / iPad：保護者が読みやすい文字サイズに */
+@media (max-width: 1024px), (pointer: coarse) {
+  body {
+    font-size: 18px;
+    line-height: 1.6;
+  }
+
+  .subtitle {
+    font-size: 17px;
+    line-height: 1.5;
+  }
+
+  .help,
+  .role-note,
+  .notice,
+  .message,
+  .game-row small {
+    font-size: 17px;
+    line-height: 1.65;
+  }
+
+  .small-note,
+  .footer,
+  .caption,
+  .metric span,
+  label {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  h2,
+  .dialog-head h2 {
+    font-size: 27px;
+    line-height: 1.25;
+  }
+
+  h3,
+  summary {
+    font-size: 22px;
+    line-height: 1.4;
+  }
+
+  .button {
+    min-height: 48px;
+    padding: 10px 14px;
+    font-size: 17px;
+  }
+
+  input,
+  select {
+    min-height: 50px;
+    font-size: 18px;
+  }
+
+  .badge,
+  .count-badge,
+  .save-status {
+    font-size: 14px;
+  }
+
+  .metric strong {
+    font-size: 25px;
+  }
+
+  .candidate strong {
+    font-size: 20px;
+  }
+
+  .candidate p {
+    font-size: 16px;
+    line-height: 1.55;
+  }
+
+  table {
+    font-size: 18px;
+    line-height: 1.45;
+  }
+
+  th {
+    font-size: 16px;
+    line-height: 1.4;
+  }
+
+  th,
+  td {
+    padding: 13px 10px;
+  }
+}
+</style>
+</head>
+
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div>
+      <h1>moments of glory</h1>
+      <p class="subtitle" data-i18n="subtitle"></p>
+    </div>
+    <div class="header-tools">
+      <div class="language-switch" data-i18n-aria="languageLabel">
+        <button type="button" data-lang="ja" class="active">日本語</button>
+        <button type="button" data-lang="en">English</button>
+      </div>
+      <button id="sync-button" class="button button-secondary" type="button" hidden="" data-i18n="sync"></button>
+      <button id="logout-button" class="button button-secondary" type="button" hidden="" data-i18n="logout"></button>
+      <span id="save-status" class="save-status"></span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section id="login-view" class="card">
+    <h2 data-i18n="loginTitle"></h2>
+    <p class="help" data-i18n="loginHelp"></p>
+    <form id="login-form">
+      <label>
+        <span data-i18n="email"></span>
+        <input id="email" type="email" autocomplete="username" required="">
+      </label>
+      <label style="margin-top:9px">
+        <span data-i18n="password"></span>
+        <input id="password" type="password" autocomplete="current-password" required="">
+      </label>
+      <div class="actions">
+        <button id="login-button" class="button button-primary" type="submit" data-i18n="login">ログイン</button>
+      </div>
+    </form>
+    <p id="login-message" class="message" role="status"></p>
+  </section>
+
+  <div id="app-view" hidden="">
+    <div id="home-view">
+      <section class="card accent">
+        <div class="section-head">
+          <div>
+            <h2 data-i18n="seasonTitle"></h2>
+            <p class="help" data-i18n="seasonHelp"></p>
+          </div>
+          <span id="player-count" class="badge"></span>
+        </div>
+        <div id="season-metrics" class="metrics"></div>
+        <h3 data-i18n="candidatesTitle"></h3>
+        <div id="season-candidates" class="candidates"></div>
+        <p id="unassigned-qb" class="small-note"></p>
+        <div id="season-table" class="table-scroll"></div>
+      </section>
+
+      <section class="card">
+        <h2 data-i18n="gameDaysTitle"></h2>
+        <p class="help" data-i18n="gameDaysHelp"></p>
+        <div id="game-list" class="game-list"></div>
+      </section>
+
+      <details class="card">
+        <summary data-i18n="pastTotalsTitle"></summary>
+        <div class="details-body">
+          <p class="help" data-i18n="pastTotalsHelp"></p>
+          <p id="qb-audit" class="notice"></p>
+          <p id="carry-audit" class="small-note"></p>
+          <div id="historical-table" class="table-scroll"></div>
+          <div class="actions">
+            <button id="save-historical" class="button button-primary" type="button" data-i18n="savePast"></button>
+            <span id="historical-status" class="small-note"></span>
+          </div>
+        </div>
+      </details>
+
+      <details class="card">
+        <summary data-i18n="rosterTitle"></summary>
+        <div class="details-body">
+          <p class="help" data-i18n="rosterHelp"></p>
+          <form id="add-player-form" class="roles" style="max-width:none;margin:0">
+            <label>
+              <span data-i18n="playerName"></span>
+              <input id="new-player-name" maxlength="30" autocomplete="off" required="">
+            </label>
+            <label>
+              <span data-i18n="jerseyOptional"></span>
+              <input id="new-player-number" inputmode="numeric" maxlength="3" autocomplete="off">
+            </label>
+            <button class="button button-secondary" type="submit" data-i18n="addPlayer"></button>
+          </form>
+          <p id="roster-message" class="message" role="status"></p>
+          <div id="roster-list" class="game-list"></div>
+        </div>
+      </details>
+    </div>
+
+    <div id="game-view" hidden="">
+      <div class="game-nav">
+        <div>
+          <button id="back-home" class="button button-secondary" type="button" data-i18n="back"></button>
+          <h2 id="game-title"></h2>
+        </div>
+        <label>
+          <span data-i18n="switchGame"></span>
+          <select id="game-switcher"></select>
+        </label>
+      </div>
+
+      <section class="card">
+        <h2 data-i18n="daySummary"></h2>
+        <p class="notice" data-i18n="pastNotByDay"></p>
+        <div id="day-metrics" class="metrics"></div>
+        <div id="day-table" class="table-scroll"></div>
+      </section>
+
+      <section class="card">
+        <h2 data-i18n="recordPlayTitle"></h2>
+        <p class="help" data-i18n="fieldHelp"></p>
+
+        <div class="field" role="group" data-i18n-aria="fieldAria">
+          <div class="endzone top"></div>
+          <div class="endzone bottom"></div>
+          <div class="scrimmage"></div>
+          <div class="attack" data-i18n="attack"></div>
+          <div id="field-markers" class="markers"></div>
+        </div>
+
+        <div class="roles">
+          <label>
+            <span data-i18n="qbForPlay"></span>
+            <select id="qb-select"></select>
+          </label>
+          <label>
+            <span data-i18n="carryForPlay"></span>
+            <select id="carry-select"></select>
+          </label>
+        </div>
+        <p class="role-note" data-i18n="roleNote"></p>
+
+        <div class="touch-row">
+          <span id="touch-count"></span>
+          <button id="clear-touches" class="button button-secondary" type="button" data-i18n="clearTouches"></button>
+        </div>
+
+        <div class="actions">
+          <button id="record-play" class="button button-primary wide" type="button" data-i18n="recordPlay"></button>
+          <button id="undo-play" class="button button-secondary" type="button" data-i18n="undo"></button>
+        </div>
+        <p id="play-message" class="message" role="status"></p>
+      </section>
+
+      <section class="card">
+        <h2 data-i18n="dayMedals"></h2>
+        <p class="help" data-i18n="dayMedalsHelp"></p>
+        <div class="medal-picks">
+          <label><span data-i18n="recipientOne"></span><select id="medal-one"></select></label>
+          <label><span data-i18n="recipientTwo"></span><select id="medal-two"></select></label>
+        </div>
+        <div class="actions">
+          <button id="save-medals" class="button button-primary" type="button" data-i18n="saveMedals"></button>
+          <span id="medal-status" class="small-note"></span>
+        </div>
+        <p id="medal-message" class="message" role="status"></p>
+      </section>
+
+      <details class="card">
+        <summary data-i18n="recentPlays"></summary>
+        <div id="recent-plays" class="details-body"></div>
+      </details>
+    </div>
+  </div>
+
+  <p class="footer" data-i18n="footerNote"></p>
+</main>
+
+<dialog id="picker-dialog" class="picker-dialog">
+  <div class="dialog-head">
+    <h2 id="picker-title"></h2>
+    <button id="picker-close" class="button button-secondary" type="button" data-i18n="close"></button>
+  </div>
+  <div id="picker-options" class="picker-options"></div>
+</dialog>
+
+<dialog id="profile-dialog" class="profile-dialog">
+  <div class="dialog-head">
+    <h2 id="profile-title"></h2>
+    <button id="profile-close" class="button button-secondary" type="button" data-i18n="close"></button>
+  </div>
+  <div id="profile-content" class="dialog-content"></div>
+</dialog>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/*
+  下の2つだけ、自分のSupabaseの値に置き換えてください。
+  Publishable key / 旧anon public keyのみ使用。secretやservice_roleは使わない。
+*/
+  const SUPABASE_URL = "https://meinttcgsrdpmghsfmnl.supabase.co";
+    const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_1v7HQa7L_2e6xiek_a6ZqQ_ksP33ccg";
+const PAST_OFFENSIVE_PLAYS = 35;
+const SPOTS = ["A", "B", "C", "D", "E"];
+
+const TEXT = {
+  ja: {
+    subtitle: "全試合のサマリーと、試合日ごとの記録",
+    languageLabel: "言語切り替え",
+    saved: "Supabaseに保存",
+    syncing: "同期中…",
+    sync: "更新",
+    syncFailed: "同期エラー",
+    logout: "ログアウト",
+
+    loginTitle: "コーチログイン",
+    loginHelp: "共有用のコーチアカウントでログインしてください。",
+    email: "メールアドレス",
+    password: "パスワード",
+    login: "ログイン",
+    configMissing: "HTML内のSUPABASE_URLとSUPABASE_PUBLISHABLE_KEYを設定してください。",
+    loginError: "ログインできません",
+    membershipMissing: "このアカウントはチームに登録されていません。Supabaseのteam_membersを確認してください。",
+
+    seasonTitle: "全試合サマリー",
+    seasonHelp: "過去35プレーの集計と、このツールで記録した全試合分です。",
+    playerCount: "{count}人",
+    teamQB: "チーム QB機会",
+    teamCarry: "チーム ボール運び機会",
+    teamMedals: "チーム メダル",
+    candidatesTitle: "次に機会を回したい選手",
+    qbOpp: "Quarter Back opportunities",
+    carryOpp: "All carrying opportunities",
+    allTied: "全員同数：{count}",
+    range: "最少 {min} ／ 最多 {max}",
+    candidates: "候補：{names}",
+    noPlayers: "選手が登録されていません。",
+    unassignedQB: "過去のQB機会で未割当：{count}回",
+    noUnassigned: "過去のQB機会は35回で、全員分が集計されています。",
+    summaryCaption: "黄色の数字は、その機会数が最少の選手です。",
+    player: "選手",
+    medals: "メダル",
+    summary: "サマリー",
+    teamTotal: "チーム合計",
+
+    gameDaysTitle: "試合日ごとの記録",
+    gameDaysHelp: "日付を選ぶと、その日の集計と記録画面が開きます。",
+    game: "試合 {number}",
+    plays: "{count}プレー",
+    medalNames: "メダル",
+    noMedals: "メダル未記録",
+    openGame: "試合を開く",
+    switchGame: "別の試合日",
+    back: "← 全試合サマリー",
+
+    pastTotalsTitle: "過去35プレーの数字",
+    pastTotalsHelp: "コーチから受け取った選手別の数字です。修正した場合は保存してください。",
+    pastQB: "過去 QB機会",
+    pastCarry: "過去 ボール運び機会",
+    savePast: "過去の数字を保存",
+    pastSaved: "過去の数字を保存しました。",
+    pastMatch: "QB機会合計 {sum}回は、過去{plays}プレーと一致しています。",
+    pastGap: "QB機会は{sum}回です。残り{gap}回は未割当です。",
+    pastOver: "QB機会合計が過去プレー数を{extra}回上回っています。数字を確認してください。",
+    pastCarryTotal: "過去のボール運び機会合計：{sum}回。",
+    savedEdit: "変更があります。保存してください。",
+
+    rosterTitle: "選手登録",
+    rosterHelp: "選手名だけで登録できます。背番号は任意です。",
+    playerName: "選手名",
+    jerseyOptional: "背番号（任意）",
+    addPlayer: "選手を追加",
+    nameRequired: "選手名を入力してください。",
+    duplicateName: "同じ名前の選手がすでにいます。",
+    badJersey: "背番号は1〜3桁の数字にしてください。",
+    playerAdded: "選手を追加しました。",
+
+    daySummary: "この日の集計",
+    pastNotByDay: "過去35プレーの内訳は日付が分からないため、日別の数字には含めていません。",
+    dayPlays: "記録したプレー",
+    dayQB: "QB機会",
+    dayCarry: "ボール運び機会",
+    dayTableCaption: "このツールで記録した、この日の選手別集計です。",
+    recordPlayTitle: "この日のプレーを記録",
+    fieldHelp: "スナップ直前の位置で選手を配置します。空いた場所をタップして選んでください。",
+    fieldAria: "5人制フットボールのフィールド図",
+    attack: "攻撃方向 ↑",
+    choosePlayer: "選手を選ぶ",
+    tapTouch: "タップでタッチ記録",
+    changePlayer: "選手を変更",
+    qbForPlay: "このプレーのQB（必須）",
+    chooseQB: "QBを選ぶ",
+    carryForPlay: "ボール運び機会（任意）",
+    noCarry: "なし／該当なし",
+    roleNote: "QBとボール運びの選手はタッチにも自動加算します。それ以外に触れた選手は、フィールド上の選手をタップしてください。",
+    extraTouches: "追加タッチ選択：{count}人",
+    clearTouches: "タッチをクリア",
+    recordPlay: "このプレーを記録",
+    undo: "1件戻す",
+    allFive: "5つの場所すべてに選手を設定してください。未設定：{areas}",
+    chooseQBError: "QBを選択してください。",
+    rolesOffField: "QBとボール運びは、フィールド上の選手から選んでください。",
+    duplicateOnField: "同じ選手が複数の場所に設定されています。",
+    playSaved: "プレーを保存しました。",
+    playUndone: "直前のプレーを取り消しました。",
+    noPlays: "この日のプレー記録はまだありません。",
+    playNumber: "プレー {number}",
+
+    dayMedals: "この日のメダル",
+    dayMedalsHelp: "受賞者を2人選んで保存します。",
+    recipientOne: "受賞者 1人目",
+    recipientTwo: "受賞者 2人目",
+    saveMedals: "メダルを保存",
+    medalSaved: "メダルを保存しました。",
+    chooseBoth: "受賞者を2人選んでください。",
+    differentPlayers: "異なる選手を2人選んでください。",
+    savedAward: "保存済み",
+    unsavedAward: "未保存の変更があります",
+    recentPlays: "直近のプレー",
+    close: "閉じる",
+
+    profile: "選手サマリー",
+    profileQB: "QB機会",
+    profileCarry: "ボール運び機会",
+    profileTouch: "タッチ（ツール記録）",
+    profileMedals: "メダル",
+    breakdown: "機会数の内訳",
+    past: "過去分",
+    tool: "ツール記録",
+    total: "累計",
+    byGame: "試合日ごとの記録",
+    noDayRecords: "日付付きのプレー記録はまだありません。",
+    profileAreas: "フィールド上の出場",
+    areaNote: "A〜Eは、このツールで記録した配置のみです。",
+
+    syncDiscard: "未保存の変更があります。破棄して更新しますか？",
+    footer: "データはSupabaseに保存されます。別端末の変更は自動同期または「更新」から反映します。"
+  },
+
+  en: {
+    subtitle: "Season summary and records by game day",
+    languageLabel: "Choose language",
+    saved: "Saved to Supabase",
+    syncing: "Syncing…",
+    sync: "Refresh",
+    syncFailed: "Sync error",
+    logout: "Sign out",
+
+    loginTitle: "Coach login",
+    loginHelp: "Sign in with the shared coach account.",
+    email: "Email",
+    password: "Password",
+    login: "Sign in",
+    configMissing: "Set SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY in this HTML file.",
+    loginError: "Could not sign in",
+    membershipMissing: "This account is not linked to the team. Check team_members in Supabase.",
+
+    seasonTitle: "All-games summary",
+    seasonHelp: "Historical totals from 35 plays plus all plays recorded in this tool.",
+    playerCount: "{count} players",
+    teamQB: "Team QB opportunities",
+    teamCarry: "Team carrying opportunities",
+    teamMedals: "Team medals",
+    candidatesTitle: "Players to consider next",
+    qbOpp: "Quarter Back opportunities",
+    carryOpp: "All carrying opportunities",
+    allTied: "All tied: {count}",
+    range: "Fewest {min} / most {max}",
+    candidates: "Candidates: {names}",
+    noPlayers: "No players are registered.",
+    unassignedQB: "Unassigned past QB opportunities: {count}",
+    noUnassigned: "All 35 past QB opportunities are accounted for.",
+    summaryCaption: "Yellow marks the lowest count for that opportunity.",
+    player: "Player",
+    medals: "Medals",
+    summary: "Summary",
+    teamTotal: "Team total",
+
+    gameDaysTitle: "Records by game day",
+    gameDaysHelp: "Choose a date to open that game's summary and recording screen.",
+    game: "Game {number}",
+    plays: "{count} plays",
+    medalNames: "Medals",
+    noMedals: "No medals recorded",
+    openGame: "Open game",
+    switchGame: "Switch game day",
+    back: "← All-games summary",
+
+    pastTotalsTitle: "Totals from past 35 plays",
+    pastTotalsHelp: "Historical player totals from the coach. Save any corrections.",
+    pastQB: "Past QB opportunities",
+    pastCarry: "Past carrying opportunities",
+    savePast: "Save historical totals",
+    pastSaved: "Historical totals saved.",
+    pastMatch: "QB total {sum}, matching the {plays} past plays.",
+    pastGap: "QB total is {sum}. The remaining {gap} opportunities are unassigned.",
+    pastOver: "QB total exceeds the past play count by {extra}. Please check the totals.",
+    pastCarryTotal: "Past carrying opportunities total: {sum}.",
+    savedEdit: "Changes need to be saved.",
+
+    rosterTitle: "Team roster",
+    rosterHelp: "Names are enough. Jersey numbers are optional.",
+    playerName: "Player name",
+    jerseyOptional: "Jersey # (optional)",
+    addPlayer: "Add player",
+    nameRequired: "Enter a player name.",
+    duplicateName: "That player name is already registered.",
+    badJersey: "Use 1–3 digits for a jersey number.",
+    playerAdded: "Player added.",
+
+    daySummary: "This day's summary",
+    pastNotByDay: "The past 35 plays are not assigned to dates, so they are excluded from daily totals.",
+    dayPlays: "Plays recorded",
+    dayQB: "QB opportunities",
+    dayCarry: "Carrying opportunities",
+    dayTableCaption: "Player totals recorded in this tool for this game day.",
+    recordPlayTitle: "Record this day's play",
+    fieldHelp: "Set the players at their spots just before the snap. Tap an empty spot to choose a player.",
+    fieldAria: "Five-a-side football field diagram",
+    attack: "ATTACK ↑",
+    choosePlayer: "Choose player",
+    tapTouch: "Tap to log touch",
+    changePlayer: "Change player",
+    qbForPlay: "QB for this play (required)",
+    chooseQB: "Choose QB",
+    carryForPlay: "Ball-carry opportunity (optional)",
+    noCarry: "None / not applicable",
+    roleNote: "The QB and ball carrier are automatically counted as touches. Tap other players who touched the ball.",
+    extraTouches: "Additional touches selected: {count}",
+    clearTouches: "Clear touches",
+    recordPlay: "Record play",
+    undo: "Undo last",
+    allFive: "Assign all five spots. Missing: {areas}",
+    chooseQBError: "Choose the QB.",
+    rolesOffField: "Choose the QB and carrier from the players on the field.",
+    duplicateOnField: "The same player is assigned to more than one spot.",
+    playSaved: "Play saved.",
+    playUndone: "Undid the last play.",
+    noPlays: "No plays recorded for this day yet.",
+    playNumber: "Play {number}",
+
+    dayMedals: "Medals for this game",
+    dayMedalsHelp: "Choose two recipients and save.",
+    recipientOne: "Recipient 1",
+    recipientTwo: "Recipient 2",
+    saveMedals: "Save medals",
+    medalSaved: "Medals saved.",
+    chooseBoth: "Choose both recipients.",
+    differentPlayers: "Choose two different players.",
+    savedAward: "Saved",
+    unsavedAward: "Unsaved changes",
+    recentPlays: "Recent plays",
+    close: "Close",
+
+    profile: "Player summary",
+    profileQB: "QB opportunities",
+    profileCarry: "Carrying opportunities",
+    profileTouch: "Touches (tool records)",
+    profileMedals: "Medals",
+    breakdown: "Opportunity breakdown",
+    past: "Past",
+    tool: "Tool records",
+    total: "Total",
+    byGame: "By game day",
+    noDayRecords: "No dated play records yet.",
+    profileAreas: "Field-area appearances",
+    areaNote: "A–E counts include only lineups recorded in this tool.",
+
+    syncDiscard: "There are unsaved changes. Discard them and refresh?",
+    footer: "Data is stored in Supabase. Updates from another device appear automatically or after Refresh."
+  }
+};
+
+/* Replace the two values above with your own Project URL and publishable key. */
+let client = null;
+let configError = false;
+
+try {
+  const configured =
+    SUPABASE_URL.startsWith("https://") &&
+    !SUPABASE_URL.includes("PASTE_") &&
+    SUPABASE_PUBLISHABLE_KEY &&
+    !SUPABASE_PUBLISHABLE_KEY.includes("PASTE_");
+
+  if (configured && window.supabase?.createClient) {
+    client = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY
+    );
+  } else {
+    configError = true;
+  }
+} catch (error) {
+  configError = true;
+}
+
+const $ = selector => document.querySelector(selector);
+
+function el(tag, className = "", text = "") {
+  const node = document.createElement(tag);
+  if (className) node.className = className;
+  if (text !== "") node.textContent = text;
+  return node;
+}
+
+function loadLanguagePreference() {
+  try {
+    return localStorage.getItem("moments-of-glory-language") === "en"
+      ? "en"
+      : "ja";
+  } catch (error) {
+    return "ja";
+  }
+}
+
+function loadLanguagePreference() {
+  try {
+    return localStorage.getItem("moments-of-glory-language") === "en"
+      ? "en"
+      : "ja";
+  } catch {
+    return "ja";
+  }
+}
+
+const app = {
+  lang: loadLanguagePreference(),
+  user: null,
+  teamId: null,
+  players: [],
+  historical: {},
+  games: [],
+  view: "home",
+  currentGameId: ""
+};
+
+let historicalDraft = {};
+let historicalDirty = false;
+let medalDraft = ["", ""];
+let medalDraftGameId = "";
+let medalDirty = false;
+let pendingTouches = new Set();
+let pendingQB = "";
+let pendingCarry = "";
+let activeSpot = "";
+let activeUserId = "";
+let startPromise = null;
+let isFetching = false;
+let isSavingPlay = false;
+
+function t(key, values = {}) {
+  const template = TEXT[app.lang][key] ?? key;
+  return template.replace(/\{(\w+)\}/g, (match, name) =>
+    Object.prototype.hasOwnProperty.call(values, name)
+      ? String(values[name])
+      : match
+  );
+}
+
+function setMessage(id, text, type = "info") {
+  const node = document.getElementById(id);
+  if (!node) return;
+  node.textContent = text;
+  node.className = `message ${type}`;
+}
+
+function setSyncStatus(text, isError = false) {
+  const node = $("#save-status");
+  node.textContent = text;
+  node.classList.toggle("error", isError);
+}
+
+function playerById(id) {
+  return app.players.find(player => player.id === String(id));
+}
+
+function playerName(id) {
+  return playerById(id)?.name || "";
+}
+
+function formatCount(value) {
+  return app.lang === "ja" ? `${value}回` : String(value);
+}
+
+function formatMedalCount(value) {
+  return app.lang === "ja" ? `${value}枚` : String(value);
+}
+
+function formatDate(dateText) {
+  const parts = String(dateText).split("-").map(Number);
+  if (parts.length !== 3 || parts.some(Number.isNaN)) return dateText;
+
+  const date = new Date(parts[0], parts[1] - 1, parts[2], 12);
+  return new Intl.DateTimeFormat(
+    app.lang === "ja" ? "ja-JP" : "en-US",
+    { year: "numeric", month: "short", day: "numeric" }
+  ).format(date);
+}
+
+function gameLabel(game) {
+  const number = game.game_number;
+  return `${t("game", { number })} · ${formatDate(game.game_date)}`;
+}
+
+function getGame(id = app.currentGameId) {
+  return app.games.find(game => game.id === id) || null;
+}
+
+function cloneHistorical(source) {
+  const copy = {};
+  app.players.forEach(player => {
+    const row = source[player.id] || { qb: 0, carry: 0 };
+    copy[player.id] = {
+      qb: Number(row.qb) || 0,
+      carry: Number(row.carry) || 0
+    };
+  });
+  return copy;
+}
+
+function historicalValue(playerId, role) {
+  const row = historicalDraft[playerId] || app.historical[playerId] || {};
+  return Number(row[role]) || 0;
+}
+
+function allPlays() {
+  return app.games.flatMap(game => game.plays);
+}
+
+function roleCounts(role) {
+  const result = new Map();
+
+  app.players.forEach(player => {
+    result.set(player.id, historicalValue(player.id, role));
+  });
+
+  const column = role === "qb"
+    ? "quarterback_player_id"
+    : "ball_carrier_player_id";
+
+  allPlays().forEach(play => {
+    const id = play[column];
+    if (id && result.has(id)) {
+      result.set(id, result.get(id) + 1);
+    }
+  });
+
+  return result;
+}
+
+function medalCounts() {
+  const result = new Map(app.players.map(player => [player.id, 0]));
+
+  app.games.forEach(game => {
+    game.medals.forEach(award => {
+      if (result.has(award.player_id)) {
+        result.set(award.player_id, result.get(award.player_id) + 1);
+      }
+    });
+  });
+
+  return result;
+}
+
+function touchCounts() {
+  const result = new Map(app.players.map(player => [player.id, 0]));
+
+  allPlays().forEach(play => {
+    const touched = Array.isArray(play.touched_player_ids)
+      ? [...new Set(play.touched_player_ids)]
+      : [];
+
+    touched.forEach(id => {
+      if (result.has(id)) result.set(id, result.get(id) + 1);
+    });
+  });
+
+  return result;
+}
+
+function areaCounts(playerId) {
+  const result = Object.fromEntries(SPOTS.map(spot => [spot, 0]));
+
+  app.games.forEach(game => {
+    game.plays.forEach(play => {
+      SPOTS.forEach(spot => {
+        if (play.lineup?.[spot] === playerId) result[spot]++;
+      });
+    });
+  });
+
+  return result;
+}
+
+function applyLanguage() {
+  document.documentElement.lang = app.lang;
+  document.querySelectorAll("[data-i18n]").forEach(node => {
+    node.textContent = t(node.dataset.i18n);
+  });
+  document.querySelectorAll("[data-i18n-placeholder]").forEach(node => {
+    node.placeholder = t(node.dataset.i18nPlaceholder);
+  });
+  document.querySelectorAll("[data-i18n-aria]").forEach(node => {
+    node.setAttribute("aria-label", t(node.dataset.i18nAria));
+  });
+  document.querySelectorAll("[data-lang]").forEach(button => {
+    const active = button.dataset.lang === app.lang;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-pressed", String(active));
+  });
+}
+
+function addMetric(container, label, value) {
+  const item = el("div", "metric");
+  item.append(el("span", "", label), el("strong", "", value));
+  container.append(item);
+}
+
+function renderCandidate(container, title, counts) {
+  if (!app.players.length) {
+    container.append(el("p", "small-note", t("noPlayers")));
+    return;
+  }
+
+  const values = app.players.map(player => counts.get(player.id) || 0);
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const names = app.players
+    .filter(player => (counts.get(player.id) || 0) === min)
+    .map(player => player.name);
+
+  const card = el("div", "candidate");
+  card.append(el("strong", "", title));
+  card.append(el("p", "", min === max
+    ? t("allTied", { count: formatCount(min) })
+    : t("range", { min: formatCount(min), max: formatCount(max) })
+  ));
+  card.append(el("p", "names", t("candidates", {
+    names: names.join(app.lang === "ja" ? "、" : ", ")
+  })));
+  container.append(card);
+}
+
+function renderSeasonSummary() {
+  const metricContainer = $("#season-metrics");
+  const candidateContainer = $("#season-candidates");
+  const tableContainer = $("#season-table");
+
+  metricContainer.replaceChildren();
+  candidateContainer.replaceChildren();
+  tableContainer.replaceChildren();
+
+  $("#player-count").textContent = t("playerCount", { count: app.players.length });
+
+  if (!app.players.length) {
+    tableContainer.append(el("p", "small-note", t("noPlayers")));
+    return;
+  }
+
+  const qb = roleCounts("qb");
+  const carry = roleCounts("carry");
+  const medals = medalCounts();
+
+  const qbTotal = [...qb.values()].reduce((sum, value) => sum + value, 0);
+  const carryTotal = [...carry.values()].reduce((sum, value) => sum + value, 0);
+  const medalTotal = [...medals.values()].reduce((sum, value) => sum + value, 0);
+
+  addMetric(metricContainer, t("teamQB"), formatCount(qbTotal));
+  addMetric(metricContainer, t("teamCarry"), formatCount(carryTotal));
+  addMetric(metricContainer, t("teamMedals"), formatMedalCount(medalTotal));
+
+  renderCandidate(candidateContainer, t("qbOpp"), qb);
+  renderCandidate(candidateContainer, t("carryOpp"), carry);
+
+  const pastQBTotal = app.players.reduce(
+    (sum, player) => sum + historicalValue(player.id, "qb"),
+    0
+  );
+  const unassigned = Math.max(0, 35 - pastQBTotal);
+
+  $("#unassigned-qb").textContent = unassigned
+    ? t("unassignedQB", { count: unassigned })
+    : t("noUnassigned");
+  $("#unassigned-qb").className = unassigned ? "notice" : "notice good";
+
+  const qbValues = app.players.map(player => qb.get(player.id) || 0);
+  const carryValues = app.players.map(player => carry.get(player.id) || 0);
+  const qbMin = Math.min(...qbValues);
+  const qbMax = Math.max(...qbValues);
+  const carryMin = Math.min(...carryValues);
+  const carryMax = Math.max(...carryValues);
+
+  const table = document.createElement("table");
+  table.className = "wide-table";
+  table.append(el("caption", "caption", t("summaryCaption")));
+
+  const head = document.createElement("thead");
+  const header = document.createElement("tr");
+  [t("player"), t("qbOpp"), t("carryOpp"), t("medals"), t("summary")]
+    .forEach(label => header.append(el("th", "", label)));
+  head.append(header);
+  table.append(head);
+
+  const body = document.createElement("tbody");
+
+  app.players.forEach(player => {
+    const q = qb.get(player.id) || 0;
+    const c = carry.get(player.id) || 0;
+    const m = medals.get(player.id) || 0;
+    const row = document.createElement("tr");
+
+    row.append(el("td", "name-cell", player.name));
+
+    const qCell = el("td", "", String(q));
+    if (qbMin < qbMax && q === qbMin) qCell.classList.add("low");
+    row.append(qCell);
+
+    const cCell = el("td", "", String(c));
+    if (carryMin < carryMax && c === carryMin) cCell.classList.add("low");
+    row.append(cCell);
+
+    row.append(el("td", "", String(m)));
+
+    const action = document.createElement("td");
+    const button = el("button", "button button-secondary", t("summary"));
+    button.type = "button";
+    button.addEventListener("click", () => openProfile(player.id));
+    action.append(button);
+    row.append(action);
+
+    body.append(row);
+  });
+
+  table.append(body);
+
+  const foot = document.createElement("tfoot");
+  const totalRow = document.createElement("tr");
+  totalRow.append(el("th", "", t("teamTotal")));
+  totalRow.append(el("td", "", String(qbTotal)));
+  totalRow.append(el("td", "", String(carryTotal)));
+  totalRow.append(el("td", "", String(medalTotal)));
+  totalRow.append(el("td", "", ""));
+  foot.append(totalRow);
+  table.append(foot);
+
+  tableContainer.append(table);
+}
+
+function renderGameList() {
+  const container = $("#game-list");
+  container.replaceChildren();
+
+  app.games.forEach(game => {
+    const row = el("div", "game-row");
+    const info = el("div", "");
+    const medalNames = game.medals
+      .map(award => playerName(award.player_id))
+      .filter(Boolean);
+
+    info.append(el("strong", "", gameLabel(game)));
+    info.append(el("small", "", `${t("plays", { count: game.plays.length })} · ${
+      medalNames.length ? `${t("medalNames")}: ${medalNames.join("、")}` : t("noMedals")
+    }`));
+
+    const button = el("button", "button button-secondary", t("openGame"));
+    button.type = "button";
+    button.addEventListener("click", () => openGame(game.id));
+
+    row.append(info, button);
+    container.append(row);
+  });
+}
+
+function renderHistoricalTable() {
+  const container = $("#historical-table");
+  container.replaceChildren();
+
+  const table = document.createElement("table");
+  table.className = "detail-table";
+
+  const head = document.createElement("thead");
+  const header = document.createElement("tr");
+  [t("player"), t("pastQB"), t("pastCarry")]
+    .forEach(label => header.append(el("th", "", label)));
+  head.append(header);
+  table.append(head);
+
+  const body = document.createElement("tbody");
+
+  app.players.forEach(player => {
+    const row = document.createElement("tr");
+    row.append(el("td", "name-cell", player.name));
+
+    ["qb", "carry"].forEach(role => {
+      const cell = document.createElement("td");
+      const input = document.createElement("input");
+      input.type = "number";
+      input.min = "0";
+      input.step = "1";
+      input.inputMode = "numeric";
+      input.className = "historical-input";
+      input.dataset.playerId = player.id;
+      input.dataset.role = role;
+      input.value = historicalValue(player.id, role);
+      cell.append(input);
+      row.append(cell);
+    });
+
+    body.append(row);
+  });
+
+  table.append(body);
+  container.append(table);
+  renderHistoricalAudit();
+}
+
+function renderHistoricalAudit() {
+  const pastQB = app.players.reduce(
+    (sum, player) => sum + historicalValue(player.id, "qb"),
+    0
+  );
+  const pastCarry = app.players.reduce(
+    (sum, player) => sum + historicalValue(player.id, "carry"),
+    0
+  );
+
+  if (pastQB === 35) {
+    $("#qb-audit").textContent = t("pastMatch", { sum: pastQB, plays: 35 });
+    $("#qb-audit").className = "notice good";
+  } else if (pastQB < 35) {
+    $("#qb-audit").textContent = t("pastGap", {
+      sum: pastQB,
+      gap: 35 - pastQB
+    });
+    $("#qb-audit").className = "notice";
+  } else {
+    $("#qb-audit").textContent = t("pastOver", { extra: pastQB - 35 });
+    $("#qb-audit").className = "notice";
+  }
+
+  $("#carry-audit").textContent = t("pastCarryTotal", { sum: pastCarry });
+}
+
+function renderRosterList() {
+  const container = $("#roster-list");
+  container.replaceChildren();
+
+  app.players.forEach(player => {
+    const row = el("div", "game-row");
+    const label = player.jersey_number
+      ? `${player.name} · #${player.jersey_number}`
+      : player.name;
+    row.append(el("strong", "", label));
+    container.append(row);
+  });
+}
+
+function renderHome() {
+  renderSeasonSummary();
+  renderGameList();
+  renderHistoricalTable();
+  renderRosterList();
+}
+
+function dayCounts(game) {
+  const qb = new Map(app.players.map(player => [player.id, 0]));
+  const carry = new Map(app.players.map(player => [player.id, 0]));
+  const touches = new Map(app.players.map(player => [player.id, 0]));
+
+  game.plays.forEach(play => {
+    const q = play.quarterback_player_id;
+    const c = play.ball_carrier_player_id;
+
+    if (q && qb.has(q)) qb.set(q, qb.get(q) + 1);
+    if (c && carry.has(c)) carry.set(c, carry.get(c) + 1);
+
+    const touched = Array.isArray(play.touched_player_ids)
+      ? [...new Set(play.touched_player_ids)]
+      : [];
+
+    touched.forEach(id => {
+      if (touches.has(id)) touches.set(id, touches.get(id) + 1);
+    });
+  });
+
+  return { qb, carry, touches };
+}
+
+function renderDaySummary(game) {
+  const { qb, carry, touches } = dayCounts(game);
+  const metrics = $("#day-metrics");
+  metrics.replaceChildren();
+
+  addMetric(metrics, t("dayPlays"), String(game.plays.length));
+  addMetric(metrics, t("dayQB"), String([...qb.values()].reduce((a, b) => a + b, 0)));
+  addMetric(metrics, t("dayCarry"), String([...carry.values()].reduce((a, b) => a + b, 0)));
+
+  const qbValues = [...qb.values()];
+  const carryValues = [...carry.values()];
+  const qbMin = qbValues.length ? Math.min(...qbValues) : 0;
+  const qbMax = qbValues.length ? Math.max(...qbValues) : 0;
+  const carryMin = carryValues.length ? Math.min(...carryValues) : 0;
+  const carryMax = carryValues.length ? Math.max(...carryValues) : 0;
+
+  const table = document.createElement("table");
+  table.className = "detail-table";
+  table.append(el("caption", "caption", t("dayTableCaption")));
+
+  const head = document.createElement("thead");
+  const header = document.createElement("tr");
+  [t("player"), t("qbOpp"), t("carryOpp"), t("profileTouch"), t("medals")]
+    .forEach(label => header.append(el("th", "", label)));
+  head.append(header);
+  table.append(head);
+
+  const body = document.createElement("tbody");
+
+  app.players.forEach(player => {
+    const q = qb.get(player.id) || 0;
+    const c = carry.get(player.id) || 0;
+    const row = document.createElement("tr");
+
+    row.append(el("td", "name-cell", player.name));
+
+    const qCell = el("td", "", String(q));
+    if (qbMin < qbMax && q === qbMin) qCell.classList.add("low");
+    row.append(qCell);
+
+    const cCell = el("td", "", String(c));
+    if (carryMin < carryMax && c === carryMin) cCell.classList.add("low");
+    row.append(cCell);
+
+    row.append(el("td", "", String(touches.get(player.id) || 0)));
+    row.append(el("td", "", game.medals.some(m => m.player_id === player.id) ? "1" : "0"));
+    body.append(row);
+  });
+
+  table.append(body);
+  $("#day-table").replaceChildren(table);
+}
+
+function renderGameSwitcher(game) {
+  const select = $("#game-switcher");
+  select.replaceChildren();
+
+  app.games.forEach(item => {
+    const option = document.createElement("option");
+    option.value = item.id;
+    option.textContent = gameLabel(item);
+    select.append(option);
+  });
+
+  select.value = game.id;
+}
+
+function renderPlayerSelect(select, selectedId, allowNone = false) {
+  select.replaceChildren();
+
+  const placeholder = document.createElement("option");
+  placeholder.value = "";
+  placeholder.textContent = allowNone ? t("noCarry") : t("choosePlayer");
+  select.append(placeholder);
+
+  app.players.forEach(player => {
+    const option = document.createElement("option");
+    option.value = player.id;
+    option.textContent = player.name;
+    select.append(option);
+  });
+
+  select.value = selectedId || "";
+}
+
+function renderDayMedals(game) {
+  if (medalDraftGameId !== game.id) {
+    medalDraftGameId = game.id;
+    medalDraft = [...game.medals]
+      .sort((a, b) => a.award_slot - b.award_slot)
+      .map(item => item.player_id);
+    while (medalDraft.length < 2) medalDraft.push("");
+    medalDirty = false;
+  } else if (!medalDirty) {
+    medalDraft = [...game.medals]
+      .sort((a, b) => a.award_slot - b.award_slot)
+      .map(item => item.player_id);
+    while (medalDraft.length < 2) medalDraft.push("");
+  }
+
+  renderPlayerSelect($("#medal-one"), medalDraft[0]);
+  renderPlayerSelect($("#medal-two"), medalDraft[1]);
+
+  $("#medal-status").textContent = game.medals.length === 2
+    ? t("savedAward")
+    : "";
+}
+
+function renderField(game) {
+  const container = $("#field-markers");
+  container.replaceChildren();
+
+  const onField = new Set(Object.values(game.lineup || {}).filter(Boolean));
+  pendingTouches = new Set([...pendingTouches].filter(id => onField.has(id)));
+  if (!onField.has(pendingQB)) pendingQB = "";
+  if (!onField.has(pendingCarry)) pendingCarry = "";
+
+  SPOTS.forEach((spot, index) => {
+    const positions = [
+      { x: 13, y: 42 },
+      { x: 37.7, y: 42 },
+      { x: 62.3, y: 42 },
+      { x: 87, y: 42 },
+      { x: 50, y: 69 }
+    ];
+    const pos = positions[index];
+    const id = game.lineup?.[spot] || "";
+
+    const wrap = el("div", "spot-wrap");
+    wrap.style.left = `${pos.x}%`;
+    wrap.style.top = `${pos.y}%`;
+
+    const marker = el("button", "spot");
+    marker.type = "button";
+    marker.append(el("span", "spot-letter", spot));
+
+    if (id) {
+      if (pendingTouches.has(id)) marker.classList.add("touched");
+      if (pendingQB === id) marker.classList.add("qb");
+      if (pendingCarry === id) marker.classList.add("carry");
+
+      marker.append(el("strong", "spot-name", playerName(id)));
+      marker.append(el("span", "spot-note", t("tapTouch")));
+      marker.setAttribute("aria-pressed", String(pendingTouches.has(id)));
+      marker.addEventListener("click", () => toggleTouch(id));
+    } else {
+      marker.append(el("strong", "spot-name", t("choosePlayer")));
+      marker.append(el("span", "spot-note", spot));
+      marker.addEventListener("click", () => openPicker(spot));
+    }
+
+    wrap.append(marker);
+
+    if (id) {
+      const edit = el("button", "spot-edit", "↻");
+      edit.type = "button";
+      edit.setAttribute("aria-label", `${spot}: ${t("changePlayer")}`);
+      edit.addEventListener("click", () => openPicker(spot));
+      wrap.append(edit);
+    }
+
+    container.append(wrap);
+  });
+
+  $("#touch-count").textContent = t("extraTouches", { count: pendingTouches.size });
+  $("#clear-touches").disabled = pendingTouches.size === 0;
+  renderRoleSelectors(game);
+}
+
+function renderRoleSelectors(game) {
+  const onField = [...new Set(Object.values(game.lineup || {}).filter(Boolean))];
+
+  if (!onField.includes(pendingQB)) pendingQB = "";
+  if (!onField.includes(pendingCarry)) pendingCarry = "";
+
+  const qb = $("#qb-select");
+  const carry = $("#carry-select");
+  qb.replaceChildren();
+  carry.replaceChildren();
+
+  const q0 = document.createElement("option");
+  q0.value = "";
+  q0.textContent = t("chooseQB");
+  qb.append(q0);
+
+  const c0 = document.createElement("option");
+  c0.value = "";
+  c0.textContent = t("noCarry");
+  carry.append(c0);
+
+  onField.forEach(id => {
+    const q = document.createElement("option");
+    q.value = id;
+    q.textContent = playerName(id);
+    qb.append(q);
+
+    const c = document.createElement("option");
+    c.value = id;
+    c.textContent = playerName(id);
+    carry.append(c);
+  });
+
+  qb.value = pendingQB;
+  carry.value = pendingCarry;
+}
+
+function renderRecentPlays(game) {
+  const container = $("#recent-plays");
+  container.replaceChildren();
+
+  if (!game.plays.length) {
+    container.append(el("p", "small-note", t("noPlays")));
+    return;
+  }
+
+  const recent = [...game.plays]
+    .sort((a, b) => b.play_number - a.play_number)
+    .slice(0, 5);
+
+  recent.forEach(play => {
+    const row = el("div", "game-row");
+    const info = el("div", "");
+    info.append(el("strong", "", t("playNumber", { number: play.play_number })));
+    info.append(el("small", "", `${t("qbOpp")}: ${playerName(play.quarterback_player_id)} · ${
+      t("carryOpp")}: ${play.ball_carrier_player_id ? playerName(play.ball_carrier_player_id) : "—"
+    }`));
+    row.append(info);
+    container.append(row);
+  });
+}
+
+function renderGamePage() {
+  const game = getGame();
+
+  if (!game) {
+    app.view = "home";
+    $("#home-view").hidden = false;
+    $("#game-view").hidden = true;
+    return;
+  }
+
+  $("#game-title").textContent = gameLabel(game);
+  renderGameSwitcher(game);
+  renderDaySummary(game);
+  renderField(game);
+  renderDayMedals(game);
+  renderRecentPlays(game);
+  $("#undo-play").disabled = game.plays.length === 0;
+}
+
+function renderApp() {
+  applyLanguage();
+  $("#login-view").hidden = Boolean(app.user);
+  $("#app-view").hidden = !app.user;
+  $("#sync-button").hidden = !app.user;
+  $("#logout-button").hidden = !app.user;
+
+  if (!app.user) return;
+
+  $("#home-view").hidden = app.view !== "home";
+  $("#game-view").hidden = app.view !== "game";
+
+  renderHome();
+  if (app.view === "game") renderGamePage();
+}
+
+function openGame(gameId) {
+  const game = getGame(gameId);
+  if (!game) return;
+
+  app.currentGameId = gameId;
+  app.view = "game";
+  pendingTouches.clear();
+  pendingQB = "";
+  pendingCarry = "";
+  medalDraftGameId = gameId;
+  medalDraft = [...game.medals]
+    .sort((a, b) => a.award_slot - b.award_slot)
+    .map(item => item.player_id);
+  while (medalDraft.length < 2) medalDraft.push("");
+  medalDirty = false;
+
+  renderApp();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function openPicker(spot) {
+  const game = getGame();
+  if (!game) return;
+
+  activeSpot = spot;
+  $("#picker-title").textContent = `${spot} · ${t("choosePlayer")}`;
+
+  const container = $("#picker-options");
+  container.replaceChildren();
+
+  app.players.forEach(player => {
+    const usedElsewhere = SPOTS.some(
+      other => other !== spot && game.lineup?.[other] === player.id
+    );
+
+    const button = el("button", "picker-choice", player.name);
+    button.type = "button";
+    button.disabled = usedElsewhere;
+
+    if (!usedElsewhere) {
+      button.addEventListener("click", () => {
+        const chosenSpot = activeSpot;
+        closePicker();
+        void saveLineup(chosenSpot, player.id);
+      });
+    }
+
+    container.append(button);
+  });
+
+  if (game.lineup?.[spot]) {
+    const clear = el("button", "picker-choice", t("clearTouches"));
+    clear.type = "button";
+    clear.addEventListener("click", () => {
+      const chosenSpot = activeSpot;
+      closePicker();
+      void saveLineup(chosenSpot, "");
+    });
+    container.append(clear);
+  }
+
+  $("#picker-dialog").showModal();
+}
+
+function closePicker() {
+  activeSpot = "";
+  if ($("#picker-dialog").open) $("#picker-dialog").close();
+}
+
+async function saveLineup(spot, playerId) {
+  const game = getGame();
+  if (!game) return;
+
+  const duplicate = playerId && SPOTS.some(
+    other => other !== spot && game.lineup?.[other] === playerId
+  );
+  if (duplicate) {
+    setMessage("play-message", t("duplicateOnField"), "error");
+    return;
+  }
+
+  const previous = { ...(game.lineup || {}) };
+  const next = { ...previous, [spot]: playerId || "" };
+  game.lineup = next;
+
+  if (playerId) pendingTouches.delete(playerId);
+  if (pendingQB && !Object.values(next).includes(pendingQB)) pendingQB = "";
+  if (pendingCarry && !Object.values(next).includes(pendingCarry)) pendingCarry = "";
+
+  renderApp();
+
+  const { error } = await client
+    .from("games")
+    .update({ lineup: next })
+    .eq("team_id", app.teamId)
+    .eq("id", game.id);
+
+  if (error) {
+    game.lineup = previous;
+    renderApp();
+    setMessage("play-message", error.message, "error");
+    return;
+  }
+
+  setSyncStatus(t("saved"));
+}
+
+function toggleTouch(playerId) {
+  const game = getGame();
+  if (!game) return;
+
+  if (pendingTouches.has(playerId)) pendingTouches.delete(playerId);
+  else pendingTouches.add(playerId);
+
+  renderField(game);
+}
+
+async function loadCloudData({ silent = false } = {}) {
+  if (!client || !app.teamId || isFetching) return;
+  isFetching = true;
+
+  if (!silent) setSyncStatus(t("syncing"));
+
+  try {
+    const teamId = app.teamId;
+
+    const results = await Promise.all([
+      client.from("players")
+        .select("id, name, jersey_number, sort_order")
+        .eq("team_id", teamId)
+        .order("sort_order"),
+
+      client.from("historical_opportunities")
+        .select("player_id, qb_opportunities, carrying_opportunities")
+        .eq("team_id", teamId),
+
+      client.from("games")
+        .select("id, team_id, game_date, game_number, lineup")
+        .eq("team_id", teamId)
+        .order("game_number"),
+
+      client.from("plays")
+        .select("id, team_id, game_id, play_number, quarterback_player_id, ball_carrier_player_id, lineup, touched_player_ids, created_at")
+        .eq("team_id", teamId)
+        .order("play_number"),
+
+      client.from("game_medal_awards")
+        .select("id, team_id, game_id, player_id, award_slot")
+        .eq("team_id", teamId)
+        .order("award_slot")
+    ]);
+
+    const failed = results.find(result => result.error);
+    if (failed) throw failed.error;
+
+    app.players = results[0].data || [];
+
+    app.historical = {};
+    (results[1].data || []).forEach(row => {
+      app.historical[row.player_id] = {
+        qb: Number(row.qb_opportunities) || 0,
+        carry: Number(row.carrying_opportunities) || 0
+      };
+    });
+
+    if (!historicalDirty) historicalDraft = cloneHistorical(app.historical);
+
+    const games = (results[2].data || []).map(row => {
+      const lineup = {};
+      SPOTS.forEach(spot => {
+        lineup[spot] = row.lineup?.[spot] || "";
+      });
+
+      return {
+        ...row,
+        lineup,
+        plays: [],
+        medals: []
+      };
+    });
+
+    const gameById = new Map(games.map(game => [game.id, game]));
+
+    (results[3].data || []).forEach(play => {
+      const game = gameById.get(play.game_id);
+      if (game) game.plays.push(play);
+    });
+
+    (results[4].data || []).forEach(award => {
+      const game = gameById.get(award.game_id);
+      if (game) game.medals.push(award);
+    });
+
+    games.forEach(game => {
+      game.plays.sort((a, b) => a.play_number - b.play_number);
+      game.medals.sort((a, b) => a.award_slot - b.award_slot);
+    });
+
+    app.games = games;
+
+    if (app.view === "game" && !getGame()) {
+      app.view = "home";
+      app.currentGameId = "";
+    }
+
+    if (!medalDirty) medalDraftGameId = "";
+
+    renderApp();
+    setSyncStatus(t("saved"));
+  } catch (error) {
+    setSyncStatus(t("syncFailed"), true);
+    if (!silent) setMessage("play-message", error.message || String(error), "error");
+    else console.error("Supabase refresh failed:", error);
+  } finally {
+    isFetching = false;
+  }
+}
+
+async function startAppForUser(user) {
+  if (activeUserId === user.id && startPromise) return startPromise;
+
+  activeUserId = user.id;
+  app.user = user;
+  $("#login-view").hidden = true;
+  $("#app-view").hidden = false;
+  $("#sync-button").hidden = false;
+  $("#logout-button").hidden = false;
+
+  startPromise = (async () => {
+    const { data: membership, error } = await client
+      .from("team_members")
+      .select("team_id, role")
+      .eq("user_id", user.id)
+      .limit(1)
+      .maybeSingle();
+
+    if (error) throw error;
+    if (!membership) throw new Error(t("membershipMissing"));
+
+    app.teamId = membership.team_id;
+    await loadCloudData();
+  })();
+
+  try {
+    await startPromise;
+  } catch (error) {
+    activeUserId = "";
+    startPromise = null;
+    app.user = null;
+    app.teamId = null;
+    $("#app-view").hidden = true;
+    $("#login-view").hidden = false;
+    $("#sync-button").hidden = true;
+    $("#logout-button").hidden = true;
+    setMessage("login-message", error.message || t("loginError"), "error");
+  }
+}
+
+function showSignedOut() {
+  activeUserId = "";
+  startPromise = null;
+  app.user = null;
+  app.teamId = null;
+  app.players = [];
+  app.historical = {};
+  app.games = [];
+  app.view = "home";
+  app.currentGameId = "";
+  historicalDraft = {};
+  historicalDirty = false;
+  medalDirty = false;
+
+  $("#login-view").hidden = false;
+  $("#app-view").hidden = true;
+  $("#sync-button").hidden = true;
+  $("#logout-button").hidden = true;
+}
+
+function openProfile(playerId) {
+  const player = playerById(playerId);
+  if (!player) return;
+
+  const qbPast = Number(app.historical[playerId]?.qb) || 0;
+  const carryPast = Number(app.historical[playerId]?.carry) || 0;
+  const qbTool = allPlays().filter(play => play.quarterback_player_id === playerId).length;
+  const carryTool = allPlays().filter(play => play.ball_carrier_player_id === playerId).length;
+  const touches = touchCounts().get(playerId) || 0;
+  const medals = medalCounts().get(playerId) || 0;
+
+  $("#profile-title").textContent = player.name;
+  const content = $("#profile-content");
+  content.replaceChildren();
+
+  const metrics = el("div", "profile-grid");
+  [
+    [t("profileQB"), formatCount(qbPast + qbTool)],
+    [t("profileCarry"), formatCount(carryPast + carryTool)],
+    [t("profileTouch"), String(touches)],
+    [t("profileMedals"), formatMedalCount(medals)]
+  ].forEach(([label, value]) => {
+    const metric = el("div", "profile-metric");
+    metric.append(el("span", "", label), el("strong", "", value));
+    metrics.append(metric);
+  });
+  content.append(metrics);
+
+  content.append(el("h3", "", t("breakdown")));
+
+  const table = document.createElement("table");
+  table.className = "detail-table";
+
+  const head = document.createElement("thead");
+  const header = document.createElement("tr");
+  [t("player"), t("past"), t("tool"), t("total")]
+    .forEach(label => header.append(el("th", "", label)));
+  head.append(header);
+  table.append(head);
+
+  const body = document.createElement("tbody");
+  [
+    [t("profileQB"), qbPast, qbTool],
+    [t("profileCarry"), carryPast, carryTool]
+  ].forEach(([label, past, tool]) => {
+    const row = document.createElement("tr");
+    row.append(el("td", "name-cell", label));
+    row.append(el("td", "", String(past)));
+    row.append(el("td", "", String(tool)));
+    row.append(el("td", "", String(past + tool)));
+    body.append(row);
+  });
+  table.append(body);
+  content.append(table);
+
+  content.append(el("h3", "", t("byGame")));
+
+  const daily = document.createElement("table");
+  daily.className = "detail-table";
+  const dailyHead = document.createElement("thead");
+  const dailyHeader = document.createElement("tr");
+  [t("gameDaysTitle"), t("qbOpp"), t("carryOpp"), t("medals")]
+    .forEach(label => dailyHeader.append(el("th", "", label)));
+  dailyHead.append(dailyHeader);
+  daily.append(dailyHead);
+
+  const dailyBody = document.createElement("tbody");
+  app.games.forEach(game => {
+    const q = game.plays.filter(play => play.quarterback_player_id === playerId).length;
+    const c = game.plays.filter(play => play.ball_carrier_player_id === playerId).length;
+    const m = game.medals.some(award => award.player_id === playerId) ? "1" : "0";
+
+    const row = document.createElement("tr");
+    row.append(el("td", "name-cell", gameLabel(game)));
+    row.append(el("td", "", String(q)));
+    row.append(el("td", "", String(c)));
+    row.append(el("td", "", m));
+    dailyBody.append(row);
+  });
+  daily.append(dailyBody);
+  content.append(daily);
+  content.append(el("p", "small-note", t("pastNotByDay")));
+
+  content.append(el("h3", "", t("profileAreas")));
+  const areas = areaCounts(playerId);
+  const chips = el("div", "profile-area-list");
+  SPOTS.forEach(spot => {
+    chips.append(el("span", "profile-area-chip", `${spot}: ${areas[spot]}`));
+  });
+  content.append(chips);
+  content.append(el("p", "small-note", t("areaNote")));
+
+  $("#profile-dialog").showModal();
+}
+
+async function syncNow() {
+  if (historicalDirty || medalDirty) {
+    if (!window.confirm(t("syncDiscard"))) return;
+    historicalDirty = false;
+    medalDirty = false;
+  }
+  await loadCloudData();
+}
+
+/* Login */
+$("#login-form").addEventListener("submit", async event => {
+  event.preventDefault();
+
+  if (!client) {
+    setMessage("login-message", t("configMissing"), "error");
+    return;
+  }
+
+  $("#login-button").disabled = true;
+  setMessage("login-message", "", "info");
+
+  const { data, error } = await client.auth.signInWithPassword({
+    email: $("#email").value.trim(),
+    password: $("#password").value
+  });
+
+  $("#login-button").disabled = false;
+
+  if (error) {
+    setMessage("login-message", `${t("loginError")}: ${error.message}`, "error");
+    return;
+  }
+
+  if (data.user) await startAppForUser(data.user);
+});
+
+$("#logout-button").addEventListener("click", async () => {
+  if (!client) return;
+  await client.auth.signOut();
+  showSignedOut();
+});
+
+$("#sync-button").addEventListener("click", () => void syncNow());
+
+/* Home and profile */
+$("#season-table").addEventListener("click", event => {
+  const button = event.target.closest("[data-profile-id]");
+  if (button) openProfile(button.dataset.profileId);
+});
+
+$("#game-list").addEventListener("click", event => {
+  const button = event.target.closest("[data-game-id]");
+  if (button) openGame(button.dataset.gameId);
+});
+
+$("#back-home").addEventListener("click", () => {
+  app.view = "home";
+  renderApp();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+$("#game-switcher").addEventListener("change", event => {
+  if (event.target.value) openGame(event.target.value);
+});
+
+/* Historical totals */
+$("#historical-table").addEventListener("input", event => {
+  if (!event.target.matches(".historical-input")) return;
+
+  const playerId = event.target.dataset.playerId;
+  const role = event.target.dataset.role;
+
+  if (!historicalDraft[playerId]) historicalDraft[playerId] = { qb: 0, carry: 0 };
+  historicalDraft[playerId][role] = Math.max(0, Number(event.target.value) || 0);
+  historicalDirty = true;
+
+  $("#historical-status").textContent = t("savedEdit");
+  renderHistoricalAudit();
+  renderSeasonSummary();
+});
+
+$("#save-historical").addEventListener("click", async () => {
+  if (!app.teamId) return;
+
+  const rows = app.players.map(player => ({
+    team_id: app.teamId,
+    player_id: player.id,
+    qb_opportunities: historicalValue(player.id, "qb"),
+    carrying_opportunities: historicalValue(player.id, "carry")
+  }));
+
+  const { error } = await client
+    .from("historical_opportunities")
+    .upsert(rows, { onConflict: "team_id,player_id" });
+
+  if (error) {
+    setMessage("historical-status", error.message, "error");
+    return;
+  }
+
+  historicalDirty = false;
+  $("#historical-status").textContent = t("pastSaved");
+  await loadCloudData({ silent: true });
+});
+
+/* Add player: name required, jersey optional */
+$("#add-player-form").addEventListener("submit", async event => {
+  event.preventDefault();
+
+  const name = $("#new-player-name").value.trim();
+  const jersey = $("#new-player-number").value.trim();
+
+  if (!name) {
+    setMessage("roster-message", t("nameRequired"), "error");
+    return;
+  }
+
+  if (app.players.some(player => player.name.toLowerCase() === name.toLowerCase())) {
+    setMessage("roster-message", t("duplicateName"), "error");
+    return;
+  }
+
+  if (jersey && !/^\d{1,3}$/.test(jersey)) {
+    setMessage("roster-message", t("badJersey"), "error");
+    return;
+  }
+
+  if (jersey && app.players.some(player => player.jersey_number === jersey)) {
+    setMessage("roster-message", t("badJersey"), "error");
+    return;
+  }
+
+  const nextOrder = app.players.reduce(
+    (max, player) => Math.max(max, Number(player.sort_order) || 0),
+    0
+  ) + 1;
+
+  const { data: newPlayer, error } = await client
+    .from("players")
+    .insert({
+      team_id: app.teamId,
+      name,
+      jersey_number: jersey || null,
+      sort_order: nextOrder
+    })
+    .select("id")
+    .single();
+
+  if (error) {
+    setMessage("roster-message", error.message, "error");
+    return;
+  }
+
+  const { error: historicalError } = await client
+    .from("historical_opportunities")
+    .insert({
+      team_id: app.teamId,
+      player_id: newPlayer.id,
+      qb_opportunities: 0,
+      carrying_opportunities: 0
+    });
+
+  if (historicalError) {
+    setMessage("roster-message", historicalError.message, "error");
+    return;
+  }
+
+  $("#add-player-form").reset();
+  setMessage("roster-message", t("playerAdded"), "success");
+  await loadCloudData({ silent: true });
+});
+
+/* Save lineup immediately to Supabase */
+$("#qb-select").addEventListener("change", event => {
+  pendingQB = event.target.value;
+  const game = getGame();
+  if (game) renderField(game);
+});
+
+$("#carry-select").addEventListener("change", event => {
+  pendingCarry = event.target.value;
+  const game = getGame();
+  if (game) renderField(game);
+});
+
+$("#clear-touches").addEventListener("click", () => {
+  pendingTouches.clear();
+  const game = getGame();
+  if (game) renderField(game);
+});
+
+/* Record one play */
+$("#record-play").addEventListener("click", async () => {
+  const game = getGame();
+  if (!game || isSavingPlay) return;
+
+  const missing = SPOTS.filter(spot => !game.lineup?.[spot]);
+  if (missing.length) {
+    setMessage("play-message", t("allFive", { areas: missing.join(", ") }), "error");
+    return;
+  }
+
+  const lineupIds = SPOTS.map(spot => game.lineup[spot]);
+  if (new Set(lineupIds).size !== 5) {
+    setMessage("play-message", t("duplicateOnField"), "error");
+    return;
+  }
+
+  if (!pendingQB) {
+    setMessage("play-message", t("chooseQBError"), "error");
+    return;
+  }
+
+  const onField = new Set(lineupIds);
+  if (!onField.has(pendingQB) || (pendingCarry && !onField.has(pendingCarry))) {
+    setMessage("play-message", t("rolesOffField"), "error");
+    return;
+  }
+
+  const touched = new Set(pendingTouches);
+  touched.add(pendingQB);
+  if (pendingCarry) touched.add(pendingCarry);
+
+  const nextPlayNumber = game.plays.reduce(
+    (max, play) => Math.max(max, Number(play.play_number) || 0),
+    0
+  ) + 1;
+
+  isSavingPlay = true;
+  $("#record-play").disabled = true;
+
+  const { error } = await client
+    .from("plays")
+    .insert({
+      team_id: app.teamId,
+      game_id: game.id,
+      play_number: nextPlayNumber,
+      quarterback_player_id: pendingQB,
+      ball_carrier_player_id: pendingCarry || null,
+      lineup: { ...game.lineup },
+      touched_player_ids: [...touched]
+    });
+
+  isSavingPlay = false;
+  $("#record-play").disabled = false;
+
+  if (error) {
+    setMessage("play-message", error.message, "error");
+    return;
+  }
+
+  pendingTouches.clear();
+  pendingQB = "";
+  pendingCarry = "";
+  await loadCloudData({ silent: true });
+  setMessage("play-message", t("playSaved"), "success");
+});
+
+$("#undo-play").addEventListener("click", async () => {
+  const game = getGame();
+  if (!game || !game.plays.length) return;
+
+  const latest = [...game.plays].sort(
+    (a, b) => b.play_number - a.play_number
+  )[0];
+
+  const { error } = await client
+    .from("plays")
+    .delete()
+    .eq("team_id", app.teamId)
+    .eq("id", latest.id);
+
+  if (error) {
+    setMessage("play-message", error.message, "error");
+    return;
+  }
+
+  await loadCloudData({ silent: true });
+  setMessage("play-message", t("playUndone"), "info");
+});
+
+/* Medals for the selected game */
+function updateMedalDraft() {
+  medalDraft = [$("#medal-one").value, $("#medal-two").value];
+  medalDirty = true;
+  $("#medal-status").textContent = t("unsavedAward");
+}
+
+$("#medal-one").addEventListener("change", updateMedalDraft);
+$("#medal-two").addEventListener("change", updateMedalDraft);
+
+$("#save-medals").addEventListener("click", async () => {
+  const game = getGame();
+  if (!game) return;
+
+  const recipients = [$("#medal-one").value, $("#medal-two").value];
+
+  if (recipients.some(id => !id)) {
+    setMessage("medal-message", t("chooseBoth"), "error");
+    return;
+  }
+  if (recipients[0] === recipients[1]) {
+    setMessage("medal-message", t("differentPlayers"), "error");
+    return;
+  }
+
+  const oldAwards = [...game.medals];
+
+  const { error: deleteError } = await client
+    .from("game_medal_awards")
+    .delete()
+    .eq("team_id", app.teamId)
+    .eq("game_id", game.id);
+
+  if (deleteError) {
+    setMessage("medal-message", deleteError.message, "error");
+    return;
+  }
+
+  const newRows = recipients.map((playerId, index) => ({
+    team_id: app.teamId,
+    game_id: game.id,
+    player_id: playerId,
+    award_slot: index + 1
+  }));
+
+  const { error: insertError } = await client
+    .from("game_medal_awards")
+    .insert(newRows);
+
+  if (insertError) {
+    // 失敗時は、以前の受賞記録を戻す
+    if (oldAwards.length) {
+      await client.from("game_medal_awards").insert(
+        oldAwards.map(award => ({
+          team_id: app.teamId,
+          game_id: game.id,
+          player_id: award.player_id,
+          award_slot: award.award_slot
+        }))
+      );
+    }
+    await loadCloudData({ silent: true });
+    setMessage("medal-message", insertError.message, "error");
+    return;
+  }
+
+  medalDirty = false;
+  await loadCloudData({ silent: true });
+  setMessage("medal-message", t("medalSaved"), "success");
+});
+
+/* Dialogs and language */
+$("#picker-close").addEventListener("click", closePicker);
+$("#picker-dialog").addEventListener("cancel", () => { activeSpot = ""; });
+$("#picker-dialog").addEventListener("click", event => {
+  if (event.target === $("#picker-dialog")) closePicker();
+});
+$("#profile-close").addEventListener("click", () => $("#profile-dialog").close());
+$("#profile-dialog").addEventListener("click", event => {
+  if (event.target === $("#profile-dialog")) $("#profile-dialog").close();
+});
+
+document.querySelectorAll("[data-lang]").forEach(button => {
+  button.addEventListener("click", () => {
+    app.lang = button.dataset.lang;
+    renderApp();
+  });
+});
+
+/* Authentication setup */
+async function initialize() {
+  applyLanguage();
+
+  if (!client) {
+    $("#login-button").disabled = true;
+    setMessage("login-message", t("configMissing"), "error");
+    setSyncStatus(t("saveError"), true);
+    return;
+  }
+
+  client.auth.onAuthStateChange((_event, session) => {
+    // Supabase recommends scheduling follow-up work outside this callback.
+    setTimeout(() => {
+      if (session?.user) {
+        void startAppForUser(session.user);
+      } else {
+        showSignedOut();
+      }
+    }, 0);
+  });
+
+  const { data, error } = await client.auth.getSession();
+
+  if (error) {
+    setMessage("login-message", error.message, "error");
+    return;
+  }
+
+  if (data.session?.user) {
+    await startAppForUser(data.session.user);
+  }
+}
+
+setInterval(() => {
+  if (!app.user || document.hidden || historicalDirty || medalDirty) return;
+  if ($("#picker-dialog").open || $("#profile-dialog").open) return;
+
+  const focused = document.activeElement;
+  if (focused && ["INPUT", "SELECT", "TEXTAREA"].includes(focused.tagName)) return;
+
+  void loadCloudData({ silent: true });
+}, 20000);
+
+document.addEventListener("click", event => {
+  const button = event.target.closest("[data-lang], [data-language]");
+  if (!button) return;
+
+  const selectedLanguage =
+    button.dataset.lang || button.dataset.language;
+
+  try {
+    localStorage.setItem(
+      "moments-of-glory-language",
+      selectedLanguage === "en" ? "en" : "ja"
+    );
+  } catch {
+    // 保存できない環境では、開いている間だけ反映
+  }
+});
+
+initialize();
+</script>
+
+</body></html>
