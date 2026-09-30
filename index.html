@@ -589,6 +589,69 @@ summary { padding: 13px 16px; color: var(--green); cursor: pointer; font-family:
     padding: 13px 10px;
   }
 }
+
+/* iPhone：フィールドのエリアを広げ、選手名を見やすくする */
+@media (max-width: 600px) {
+  #game-view .field {
+    min-height: 420px;
+    aspect-ratio: auto;
+  }
+
+  #game-view #field-markers .spot-wrap {
+    width: clamp(92px, 29vw, 118px);
+    height: 82px;
+  }
+
+  #game-view #field-markers .spot-wrap:nth-child(1) {
+    left: 30% !important;
+    top: 29% !important;
+  }
+
+  #game-view #field-markers .spot-wrap:nth-child(2) {
+    left: 70% !important;
+    top: 29% !important;
+  }
+
+  #game-view #field-markers .spot-wrap:nth-child(3) {
+    left: 30% !important;
+    top: 51% !important;
+  }
+
+  #game-view #field-markers .spot-wrap:nth-child(4) {
+    left: 70% !important;
+    top: 51% !important;
+  }
+
+  #game-view #field-markers .spot-wrap:nth-child(5) {
+    left: 50% !important;
+    top: 76% !important;
+  }
+
+  #game-view .spot-name {
+    display: -webkit-box;
+    max-width: 100%;
+    overflow: hidden;
+    font-size: 15px;
+    line-height: 1.15;
+    text-align: center;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  #game-view .spot-note {
+    font-size: 11px;
+    text-align: center;
+  }
+
+  #game-view .spot-edit {
+    width: 34px;
+    min-height: 34px;
+    font-size: 17px;
+  }
+}
+
 </style>
 </head>
 
