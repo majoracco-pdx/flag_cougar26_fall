@@ -652,6 +652,84 @@ summary { padding: 13px 16px; color: var(--green); cursor: pointer; font-family:
   }
 }
 
+.full-summary-dialog {
+  width: min(700px, calc(100% - 22px));
+}
+
+.summary-popup-list {
+  display: grid;
+  gap: 9px;
+  max-height: 68vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.summary-player-card {
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #fbfdfb;
+}
+
+.summary-player-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.summary-player-name {
+  color: var(--green);
+  font-size: 19px;
+}
+
+.summary-player-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 9px;
+}
+
+.summary-player-stat {
+  padding: 9px 5px;
+  border-radius: 8px;
+  background: var(--pale);
+  text-align: center;
+}
+
+.summary-player-stat span {
+  display: block;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.summary-player-stat strong {
+  display: block;
+  margin-top: 3px;
+  color: var(--green);
+  font-size: 21px;
+}
+
+@media (max-width: 600px) {
+  .full-summary-dialog {
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    max-height: 100dvh;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+  }
+
+  .full-summary-dialog .dialog-content {
+    padding: 13px;
+  }
+
+  .summary-popup-list {
+    max-height: calc(100dvh - 145px);
+  }
+}
+
 </style>
 </head>
 
@@ -708,6 +786,14 @@ summary { padding: 13px 16px; color: var(--green); cursor: pointer; font-family:
         <h3 data-i18n="candidatesTitle"></h3>
         <div id="season-candidates" class="candidates"></div>
         <p id="unassigned-qb" class="small-note"></p>
+        <div class="actions">
+  <button id="open-full-summary"
+          class="button button-secondary"
+          type="button"
+          data-i18n="openFullSummary">
+    全員分を大きく見る
+  </button>
+</div>
         <div id="season-table" class="table-scroll"></div>
       </section>
 
@@ -846,6 +932,26 @@ summary { padding: 13px 16px; color: var(--green); cursor: pointer; font-family:
   </div>
   <div id="profile-content" class="dialog-content"></div>
 </dialog>
+<dialog id="full-summary-dialog"
+        class="profile-dialog full-summary-dialog"
+        aria-labelledby="full-summary-title">
+  <div class="dialog-head">
+    <h2 id="full-summary-title" data-i18n="fullSummaryTitle">
+      全選手のサマリー
+    </h2>
+    <button id="close-full-summary"
+            class="button button-secondary"
+            type="button"
+            data-i18n="close">
+      閉じる
+    </button>
+  </div>
+
+  <div class="dialog-content">
+    <p class="help" data-i18n="fullSummaryHelp"></p>
+    <div id="full-summary-list" class="summary-popup-list"></div>
+  </div>
+</dialog>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -897,7 +1003,12 @@ const TEXT = {
     medals: "メダル",
     summary: "サマリー",
     teamTotal: "チーム合計",
-
+　openFullSummary: "全員分を大きく見る",
+　fullSummaryTitle: "全選手のサマリー",
+　fullSummaryHelp: "選手ごとのQB機会・ボール運び機会・メダル数です。",
+　shortQB: "QB",
+　shortCarry: "運び",
+　shortMedals: "メダル",
     gameDaysTitle: "試合日ごとの記録",
     gameDaysHelp: "日付を選ぶと、その日の集計と記録画面が開きます。",
     game: "試合 {number}",
@@ -1030,7 +1141,12 @@ const TEXT = {
     medals: "Medals",
     summary: "Summary",
     teamTotal: "Team total",
-
+　openFullSummary: "View all players",
+　fullSummaryTitle: "All-player summary",
+　fullSummaryHelp: "QB opportunities, carrying opportunities, and medals for every player.",
+　shortQB: "QB",
+　shortCarry: "Carry",
+　shortMedals: "Medals",
     gameDaysTitle: "Records by game day",
     gameDaysHelp: "Choose a date to open that game's summary and recording screen.",
     game: "Game {number}",
@@ -1499,6 +1615,59 @@ function renderSeasonSummary() {
   table.append(foot);
 
   tableContainer.append(table);
+}
+
+function renderFullSummaryPopup() {
+  const container = $("#full-summary-list");
+  container.replaceChildren();
+
+  if (!app.players.length) {
+    container.append(el("p", "small-note", t("noPlayers")));
+    return;
+  }
+
+  const qb = roleCounts("qb");
+  const carry = roleCounts("carry");
+  const medals = medalCounts();
+
+  app.players.forEach(player => {
+    const card = el("article", "summary-player-card");
+    const header = el("div", "summary-player-head");
+
+    header.append(el("strong", "summary-player-name", player.name));
+
+    const profileButton = el(
+      "button",
+      "button button-secondary",
+      t("summary")
+    );
+    profileButton.type = "button";
+    profileButton.addEventListener("click", () => {
+      $("#full-summary-dialog").close();
+      openProfile(player.id);
+    });
+
+    header.append(profileButton);
+    card.append(header);
+
+    const stats = el("div", "summary-player-stats");
+
+    [
+      [t("shortQB"), qb.get(player.id) || 0],
+      [t("shortCarry"), carry.get(player.id) || 0],
+      [t("shortMedals"), medals.get(player.id) || 0]
+    ].forEach(([label, value]) => {
+      const stat = el("div", "summary-player-stat");
+      stat.append(
+        el("span", "", label),
+        el("strong", "", String(value))
+      );
+      stats.append(stat);
+    });
+
+    card.append(stats);
+    container.append(card);
+  });
 }
 
 function renderGameList() {
@@ -2708,6 +2877,33 @@ document.addEventListener("click", event => {
     );
   } catch {
     // 保存できない環境では、開いている間だけ反映
+  }
+});
+
+try {
+  const savedLanguage = localStorage.getItem("moments-of-glory-language");
+
+  if (savedLanguage === "ja" || savedLanguage === "en") {
+    app.lang = savedLanguage;
+  } else {
+    app.lang = "en";
+  }
+} catch (error) {
+  app.lang = "en";
+}
+
+$("#open-full-summary").addEventListener("click", () => {
+  renderFullSummaryPopup();
+  $("#full-summary-dialog").showModal();
+});
+
+$("#close-full-summary").addEventListener("click", () => {
+  $("#full-summary-dialog").close();
+});
+
+$("#full-summary-dialog").addEventListener("click", event => {
+  if (event.target === $("#full-summary-dialog")) {
+    $("#full-summary-dialog").close();
   }
 });
 
