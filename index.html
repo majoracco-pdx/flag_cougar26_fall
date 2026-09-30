@@ -1514,7 +1514,7 @@ function renderGameList() {
 
     info.append(el("strong", "", gameLabel(game)));
     info.append(el("small", "", `${t("plays", { count: game.plays.length })} · ${
-      medalNames.length ? `${t("medalNames")}: ${medalNames.join("、")}` : t("noMedals")
+      medalNames.length ? `${t("medalNames")}: ${medalNames.join(app.lang === "ja" ? "、" : ", ")}` : t("noMedals")
     }`));
 
     const button = el("button", "button button-secondary", t("openGame"));
