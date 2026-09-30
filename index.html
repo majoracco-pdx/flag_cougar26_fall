@@ -589,209 +589,6 @@ summary { padding: 13px 16px; color: var(--green); cursor: pointer; font-family:
     padding: 13px 10px;
   }
 }
-
-/* iPhone：フィールドの5エリアを広くして、選手名を見やすくする */
-@media (max-width: 600px) {
-  #game-view .field {
-    min-height: 420px;
-    aspect-ratio: auto;
-  }
-
-  #game-view #field-markers .spot-wrap {
-    width: clamp(92px, 29vw, 118px);
-    height: 82px;
-  }
-
-  #game-view #field-markers .spot-wrap:nth-child(1) {
-    left: 30% !important;
-    top: 29% !important;
-  }
-
-  #game-view #field-markers .spot-wrap:nth-child(2) {
-    left: 70% !important;
-    top: 29% !important;
-  }
-
-  #game-view #field-markers .spot-wrap:nth-child(3) {
-    left: 30% !important;
-    top: 51% !important;
-  }
-
-  #game-view #field-markers .spot-wrap:nth-child(4) {
-    left: 70% !important;
-    top: 51% !important;
-  }
-
-  #game-view #field-markers .spot-wrap:nth-child(5) {
-    left: 50% !important;
-    top: 76% !important;
-  }
-
-  #game-view .spot-name {
-    display: -webkit-box;
-    max-width: 100%;
-    overflow: hidden;
-    font-size: 15px;
-    line-height: 1.15;
-    text-align: center;
-    white-space: normal;
-    overflow-wrap: anywhere;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-  }
-
-  #game-view .spot-note {
-    font-size: 11px;
-    text-align: center;
-  }
-
-  #game-view .spot-edit {
-    width: 34px;
-    min-height: 34px;
-    font-size: 17px;
-  }
-}
-
-.full-summary-dialog {
-  width: min(700px, calc(100% - 22px));
-}
-
-.summary-popup-list {
-  display: grid;
-  gap: 9px;
-  max-height: 68vh;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-.summary-player-card {
-  padding: 12px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: #fbfdfb;
-}
-
-.summary-player-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-}
-
-.summary-player-name {
-  color: var(--green);
-  font-size: 19px;
-}
-
-.summary-player-stats {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
-  margin-top: 9px;
-}
-
-.summary-player-stat {
-  padding: 9px 5px;
-  border-radius: 8px;
-  background: var(--pale);
-  text-align: center;
-}
-
-.summary-player-stat span {
-  display: block;
-  color: var(--muted);
-  font-size: 13px;
-}
-
-.summary-player-stat strong {
-  display: block;
-  margin-top: 3px;
-  color: var(--green);
-  font-size: 21px;
-}
-
-@media (max-width: 600px) {
-  .full-summary-dialog {
-    width: 100%;
-    height: 100vh;
-    height: 100dvh;
-    max-height: 100dvh;
-    margin: 0;
-    border: 0;
-    border-radius: 0;
-  }
-
-  .full-summary-dialog .dialog-content {
-    padding: 13px;
-  }
-
-  .summary-popup-list {
-    max-height: calc(100dvh - 145px);
-  }
-}
-
-/* iPhone：フィールドのエリアを広げ、選手名を見やすくする */
-@media (max-width: 600px) {
-  #game-view .field {
-    min-height: 420px;
-    aspect-ratio: auto;
-  }
-
-  #game-view #field-markers .spot-wrap {
-    width: clamp(92px, 29vw, 118px);
-    height: 82px;
-  }
-
-  #game-view #field-markers .spot-wrap:nth-child(1) {
-    left: 30% !important;
-    top: 29% !important;
-  }
-
-  #game-view #field-markers .spot-wrap:nth-child(2) {
-    left: 70% !important;
-    top: 29% !important;
-  }
-
-  #game-view #field-markers .spot-wrap:nth-child(3) {
-    left: 30% !important;
-    top: 51% !important;
-  }
-
-  #game-view #field-markers .spot-wrap:nth-child(4) {
-    left: 70% !important;
-    top: 51% !important;
-  }
-
-  #game-view #field-markers .spot-wrap:nth-child(5) {
-    left: 50% !important;
-    top: 76% !important;
-  }
-
-  #game-view .spot-name {
-    display: -webkit-box;
-    max-width: 100%;
-    overflow: hidden;
-    font-size: 15px;
-    line-height: 1.15;
-    text-align: center;
-    white-space: normal;
-    overflow-wrap: anywhere;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-  }
-
-  #game-view .spot-note {
-    font-size: 11px;
-    text-align: center;
-  }
-
-  #game-view .spot-edit {
-    width: 34px;
-    min-height: 34px;
-    font-size: 17px;
-  }
-}
-
 </style>
 </head>
 
@@ -799,7 +596,7 @@ summary { padding: 13px 16px; color: var(--green); cursor: pointer; font-family:
 <header class="topbar">
   <div class="topbar-inner">
     <div>
-      <h1>Moments of Glory</h1>
+      <h1>moments of glory</h1>
       <p class="subtitle" data-i18n="subtitle"></p>
     </div>
     <div class="header-tools">
@@ -848,16 +645,7 @@ summary { padding: 13px 16px; color: var(--green); cursor: pointer; font-family:
         <h3 data-i18n="candidatesTitle"></h3>
         <div id="season-candidates" class="candidates"></div>
         <p id="unassigned-qb" class="small-note"></p>
-        <div class="actions">
-  <button id="open-full-summary"
-          class="button button-secondary"
-          type="button"
-          data-i18n="openFullSummary">
-    全員分を大きく見る
-  </button>
-</div>
         <div id="season-table" class="table-scroll"></div>
-        
       </section>
 
       <section class="card">
@@ -994,27 +782,6 @@ summary { padding: 13px 16px; color: var(--green); cursor: pointer; font-family:
     <button id="profile-close" class="button button-secondary" type="button" data-i18n="close"></button>
   </div>
   <div id="profile-content" class="dialog-content"></div>
-</dialog>
-
-<dialog id="full-summary-dialog"
-        class="profile-dialog full-summary-dialog"
-        aria-labelledby="full-summary-title">
-  <div class="dialog-head">
-    <h2 id="full-summary-title" data-i18n="fullSummaryTitle">
-      全選手のサマリー
-    </h2>
-    <button id="close-full-summary"
-            class="button button-secondary"
-            type="button"
-            data-i18n="close">
-      閉じる
-    </button>
-  </div>
-
-<div class="dialog-content">
-    <p class="help" data-i18n="fullSummaryHelp"></p>
-    <div id="full-summary-list" class="summary-popup-list"></div>
-  </div>
 </dialog>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1330,17 +1097,22 @@ function el(tag, className = "", text = "") {
 
 function loadLanguagePreference() {
   try {
-    const savedLanguage = localStorage.getItem("moments-of-glory-language");
-
-    if (savedLanguage === "ja" || savedLanguage === "en") {
-      return savedLanguage;
-    }
+    return localStorage.getItem("moments-of-glory-language") === "en"
+      ? "en"
+      : "ja";
   } catch (error) {
-    // 言語設定を保存できない場合は英語
+    return "ja";
   }
-
-  return "en";
 }
+
+function loadLanguagePreference() {
+  try {
+    return localStorage.getItem("moments-of-glory-language") === "en"
+      ? "en"
+      : "ja";
+  } catch {
+    return "ja";
+  }
 }
 
 const app = {
@@ -1666,46 +1438,6 @@ function renderSeasonSummary() {
   tableContainer.append(table);
 }
 
-function renderFullSummaryPopup() {
-  const container = $("#full-summary-list");
-  container.replaceChildren();
-
-  if (!app.players.length) {
-    container.append(el("p", "small-note", t("noPlayers")));
-    return;
-  }
-
-  const qb = roleCounts("qb");
-  const carry = roleCounts("carry");
-  const medals = medalCounts();
-
-  app.players.forEach(player => {
-    const card = el("article", "summary-player-card");
-    const header = el("div", "summary-player-head");
-
-    header.append(el("strong", "summary-player-name", player.name));
-    card.append(header);
-
-    const stats = el("div", "summary-player-stats");
-
-    [
-      [t("shortQB"), qb.get(player.id) || 0],
-      [t("shortCarry"), carry.get(player.id) || 0],
-      [t("shortMedals"), medals.get(player.id) || 0]
-    ].forEach(([label, value]) => {
-      const stat = el("div", "summary-player-stat");
-      stat.append(
-        el("span", "", label),
-        el("strong", "", String(value))
-      );
-      stats.append(stat);
-    });
-
-    card.append(stats);
-    container.append(card);
-  });
-}
-
 function renderGameList() {
   const container = $("#game-list");
   container.replaceChildren();
@@ -1719,7 +1451,7 @@ function renderGameList() {
 
     info.append(el("strong", "", gameLabel(game)));
     info.append(el("small", "", `${t("plays", { count: game.plays.length })} · ${
-      medalNames.length ? `${t("medalNames")}: ${medalNames.join(app.lang === "ja" ? "、" : ", ")}` : t("noMedals")
+      medalNames.length ? `${t("medalNames")}: ${medalNames.join("、")}` : t("noMedals")
     }`));
 
     const button = el("button", "button button-secondary", t("openGame"));
@@ -2917,20 +2649,6 @@ document.addEventListener("click", event => {
 });
 
 initialize();
-$("#open-full-summary").addEventListener("click", () => {
-  renderFullSummaryPopup();
-  $("#full-summary-dialog").showModal();
-});
-
-$("#close-full-summary").addEventListener("click", () => {
-  $("#full-summary-dialog").close();
-});
-
-$("#full-summary-dialog").addEventListener("click", event => {
-  if (event.target === $("#full-summary-dialog")) {
-    $("#full-summary-dialog").close();
-  }
-});
 </script>
 
 </body></html>
