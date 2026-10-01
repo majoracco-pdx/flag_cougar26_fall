@@ -896,6 +896,38 @@ summary { padding: 13px 16px; color: var(--green); cursor: pointer; font-family:
     font-size: 23px;
   }
 }
+
+/* PC：フィールド上の選手名を読みやすくする */
+@media (min-width: 601px) {
+  #game-view .field .spot-wrap {
+    width: 112px;
+    height: 82px;
+  }
+
+  #game-view .field .spot-name {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: 100%;
+    max-width: 100%;
+    margin: 2px 0;
+    overflow: visible !important;
+    color: #183547 !important;
+    font-size: 16px !important;
+    line-height: 1.2 !important;
+    text-align: center;
+    white-space: normal !important;
+    overflow-wrap: anywhere;
+    text-overflow: clip !important;
+  }
+
+  #game-view .field .spot-note {
+    display: block !important;
+    color: #586d78 !important;
+    font-size: 12px !important;
+    text-align: center;
+  }
+}
 </style>
 </head>
 
