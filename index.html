@@ -2032,17 +2032,22 @@ function renderDaySummary(game) {
   addMetric(metrics, t("dayQB"), String([...qb.values()].reduce((a, b) => a + b, 0)));
   addMetric(metrics, t("dayCarry"), String([...carry.values()].reduce((a, b) => a + b, 0)));
 
+  // QB最小・最大
   const qbValues = [...qb.values()];
   const qbMin = qbValues.length ? Math.min(...qbValues) : 0;
   const qbMax = qbValues.length ? Math.max(...qbValues) : 0;
 
-  // QB機会が0回(q === 0)の選手のみを対象にcarry機会数を抽出
+  // QB機会0回の選手を対象にCarry最少1位を算出
   const noQbPlayers = app.players.filter(player => (qb.get(player.id) || 0) === 0);
   const noQbCarryValues = noQbPlayers.map(player => carry.get(player.id) || 0);
-  const uniqueCarryValues = [...new Set(noQbCarryValues)].sort((a, b) => a - b);
+  const carryMin = noQbCarryValues.length ? Math.min(...noQbCarryValues) : null;
+  const carryMax = noQbCarryValues.length ? Math.max(...noQbCarryValues) : null;
 
-  const firstMinCarry = uniqueCarryValues.length > 0 ? uniqueCarryValues[0] : null;
-  const secondMinCarry = uniqueCarryValues.length > 1 ? uniqueCarryValues[1] : null;
+  // Touches最少1位・2位を算出
+  const allTouchValues = app.players.map(player => touches.get(player.id) || 0);
+  const uniqueTouchValues = [...new Set(allTouchValues)].sort((a, b) => a - b);
+  const firstMinTouch = uniqueTouchValues.length > 0 ? uniqueTouchValues[0] : null;
+  const secondMinTouch = uniqueTouchValues.length > 1 ? uniqueTouchValues[1] : null;
 
   const table = document.createElement("table");
   table.className = "detail-table";
@@ -2060,28 +2065,37 @@ function renderDaySummary(game) {
   app.players.forEach(player => {
     const q = qb.get(player.id) || 0;
     const c = carry.get(player.id) || 0;
+    const tch = touches.get(player.id) || 0;
     const row = document.createElement("tr");
 
     row.append(el("td", "name-cell", player.name));
 
+    // QBセル
     const qCell = el("td", "", String(q));
     if (qbMin < qbMax && q === qbMin) qCell.classList.add("low");
     row.append(qCell);
 
-    // Carryセル (QB機会0の選手のみ、最少1位は太字、最少2位はnormalでハイライト)
+    // Carryセル (QB機会0の選手のみ、最少1位のみハイライト)
     const cCell = el("td", "", String(c));
-    if (q === 0) {
-      if (firstMinCarry !== null && c === firstMinCarry) {
-        cCell.classList.add("low");
-        cCell.style.fontWeight = "800";
-      } else if (secondMinCarry !== null && c === secondMinCarry) {
-        cCell.classList.add("low");
-        cCell.style.fontWeight = "400";
-      }
+    if (q === 0 && carryMin !== null && carryMax !== null && carryMin < carryMax && c === carryMin) {
+      cCell.classList.add("low");
     }
     row.append(cCell);
 
-    row.append(el("td", "", String(touches.get(player.id) || 0)));
+    // Touchesセル (最少1位は太字:800、最少2位は標準:400でハイライト)
+    const tCell = el("td", "", String(tch));
+    if (uniqueTouchValues.length > 1) {
+      if (firstMinTouch !== null && tch === firstMinTouch) {
+        tCell.classList.add("low");
+        tCell.style.fontWeight = "800";
+      } else if (secondMinTouch !== null && tch === secondMinTouch) {
+        tCell.classList.add("low");
+        tCell.style.fontWeight = "400";
+      }
+    }
+    row.append(tCell);
+
+    // Medalsセル
     row.append(el("td", "", game.medals.some(m => m.player_id === player.id) ? "1" : "0"));
     body.append(row);
   });
