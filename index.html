@@ -291,7 +291,7 @@ summary { padding: 13px 16px; color: var(--green); cursor: pointer; font-family:
   input,
   select {
     min-height: 50px;
-    font-size: 16px;
+    font-size: 16px; /* iPhoneで入力欄をタップした際の画面拡大を防ぎます */
   }
 
   .button {
@@ -501,6 +501,95 @@ summary { padding: 13px 16px; color: var(--green); cursor: pointer; font-family:
   #season-table td button {
     min-height: 44px;
     font-size: 15px;
+  }
+}
+
+/* iPhone / iPad：保護者が読みやすい文字サイズに */
+@media (max-width: 1024px), (pointer: coarse) {
+  body {
+    font-size: 18px;
+    line-height: 1.6;
+  }
+
+  .subtitle {
+    font-size: 17px;
+    line-height: 1.5;
+  }
+
+  .help,
+  .role-note,
+  .notice,
+  .message,
+  .game-row small {
+    font-size: 17px;
+    line-height: 1.65;
+  }
+
+  .small-note,
+  .footer,
+  .caption,
+  .metric span,
+  label {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  h2,
+  .dialog-head h2 {
+    font-size: 27px;
+    line-height: 1.25;
+  }
+
+  h3,
+  summary {
+    font-size: 22px;
+    line-height: 1.4;
+  }
+
+  .button {
+    min-height: 48px;
+    padding: 10px 14px;
+    font-size: 17px;
+  }
+
+  input,
+  select {
+    min-height: 50px;
+    font-size: 18px;
+  }
+
+  .badge,
+  .count-badge,
+  .save-status {
+    font-size: 14px;
+  }
+
+  .metric strong {
+    font-size: 25px;
+  }
+
+  .candidate strong {
+    font-size: 20px;
+  }
+
+  .candidate p {
+    font-size: 16px;
+    line-height: 1.55;
+  }
+
+  table {
+    font-size: 18px;
+    line-height: 1.45;
+  }
+
+  th {
+    font-size: 16px;
+    line-height: 1.4;
+  }
+
+  th,
+  td {
+    padding: 13px 10px;
   }
 }
 
@@ -1226,7 +1315,7 @@ const TEXT = {
     profile: "選手サマリー",
     profileQB: "QB機会",
     profileCarry: "ボール運び機会",
-    profileTouch: "タッチ（ツール記録）",
+    profileTouch: "合計タッチ",
     profileMedals: "メダル",
     breakdown: "機会数の内訳",
     past: "過去分",
@@ -1376,7 +1465,7 @@ const TEXT = {
     profile: "Player summary",
     profileQB: "QB opportunities",
     profileCarry: "Carrying opportunities",
-    profileTouch: "Touches (tool records)",
+    profileTouch: "Total touches",
     profileMedals: "Medals",
     breakdown: "Opportunity breakdown",
     past: "Past",
@@ -2032,7 +2121,7 @@ function renderDaySummary(game) {
   const carryMin = noQbCarryValues.length ? Math.min(...noQbCarryValues) : null;
   const carryMax = noQbCarryValues.length ? Math.max(...noQbCarryValues) : null;
 
-  // Touches最少1位・2位を算出（最少1位: 太字800、最少2位: normal400）
+  // Touches最少1位・2位を算出（最少1位: 太字800、最少2位: 標準400）
   const allTouchValues = app.players.map(player => touches.get(player.id) || 0);
   const uniqueTouchValues = [...new Set(allTouchValues)].sort((a, b) => a - b);
   const firstMinTouch = uniqueTouchValues.length > 0 ? uniqueTouchValues[0] : null;
@@ -2078,7 +2167,7 @@ function renderDaySummary(game) {
     if (qbMin < qbMax && q === qbMin) qCell.classList.add("low");
     row.append(qCell);
 
-    // Carryセル (QB機会0の選手のみ、最少のみハイライト)
+    // Carryセル (QB機会0の選手のみ、最少1位のみハイライト)
     const cCell = el("td", "", String(c));
     if (q === 0 && carryMin !== null && carryMax !== null && carryMin < carryMax && c === carryMin) {
       cCell.classList.add("low");
