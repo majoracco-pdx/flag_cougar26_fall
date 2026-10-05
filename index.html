@@ -1742,7 +1742,7 @@ function renderSeasonSummary() {
   const qbMin = Math.min(...qbValues);
   const qbMax = Math.max(...qbValues);
 
-  // QB機会が0回の選手のみを抽出してボール運び機会の最少1位・2位を算出
+  // QB機会が0回の選手のみを対象にcarry機会数を抽出
   const noQbPlayers = app.players.filter(player => (qb.get(player.id) || 0) === 0);
   const noQbCarryValues = noQbPlayers.map(player => carry.get(player.id) || 0);
   const uniqueCarryValues = [...new Set(noQbCarryValues)].sort((a, b) => a - b);
@@ -2033,11 +2033,16 @@ function renderDaySummary(game) {
   addMetric(metrics, t("dayCarry"), String([...carry.values()].reduce((a, b) => a + b, 0)));
 
   const qbValues = [...qb.values()];
-  const carryValues = [...carry.values()];
   const qbMin = qbValues.length ? Math.min(...qbValues) : 0;
   const qbMax = qbValues.length ? Math.max(...qbValues) : 0;
-  const carryMin = carryValues.length ? Math.min(...carryValues) : 0;
-  const carryMax = carryValues.length ? Math.max(...carryValues) : 0;
+
+  // QB機会が0回(q === 0)の選手のみを対象にcarry機会数を抽出
+  const noQbPlayers = app.players.filter(player => (qb.get(player.id) || 0) === 0);
+  const noQbCarryValues = noQbPlayers.map(player => carry.get(player.id) || 0);
+  const uniqueCarryValues = [...new Set(noQbCarryValues)].sort((a, b) => a - b);
+
+  const firstMinCarry = uniqueCarryValues.length > 0 ? uniqueCarryValues[0] : null;
+  const secondMinCarry = uniqueCarryValues.length > 1 ? uniqueCarryValues[1] : null;
 
   const table = document.createElement("table");
   table.className = "detail-table";
@@ -2063,8 +2068,17 @@ function renderDaySummary(game) {
     if (qbMin < qbMax && q === qbMin) qCell.classList.add("low");
     row.append(qCell);
 
+    // Carryセル (QB機会0の選手のみ、最少1位は太字、最少2位はnormalでハイライト)
     const cCell = el("td", "", String(c));
-    if (carryMin < carryMax && c === carryMin) cCell.classList.add("low");
+    if (q === 0) {
+      if (firstMinCarry !== null && c === firstMinCarry) {
+        cCell.classList.add("low");
+        cCell.style.fontWeight = "800";
+      } else if (secondMinCarry !== null && c === secondMinCarry) {
+        cCell.classList.add("low");
+        cCell.style.fontWeight = "400";
+      }
+    }
     row.append(cCell);
 
     row.append(el("td", "", String(touches.get(player.id) || 0)));
