@@ -112,7 +112,7 @@ label { display: block; color: #405561; font-size: 12px; }
 .table-scroll { width: 100%; overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
 table.wide-table { min-width: 570px; }
-table.detail-table { min-width: 430px; }
+table.detail-table { min-width: 480px; }
 th, td { padding: 8px 7px; border-bottom: 1px solid #e6edf1; text-align: center; }
 th { color: var(--green-dark); background: var(--pale); font-size: 12px; }
 td.name-cell, th.name-cell { text-align: left; }
@@ -184,10 +184,16 @@ tfoot th, tfoot td { border-top: 2px solid var(--green); background: var(--pale)
   padding: 0; border: 2px solid white; border-radius: 50%;
   color: white; background: var(--green); font-weight: 800;
 }
-.roles { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 9px; max-width: 520px; margin: 12px auto; }
+.roles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 9px; max-width: 520px; margin: 12px auto; }
 .role-note { max-width: 520px; margin: 0 auto 10px; color: var(--muted); font-size: 12px; line-height: 1.45; }
 .touch-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; max-width: 520px; margin: 0 auto; }
 .touch-row span { color: var(--muted); font-size: 12px; }
+
+.defense-section {
+  margin-top: 20px;
+  border-top: 1px solid var(--border);
+  padding-top: 15px;
+}
 
 details.card { padding: 0; }
 summary { padding: 13px 16px; color: var(--green); cursor: pointer; font-family: "Barlow Condensed","Noto Sans JP",sans-serif; font-weight: 800; font-size: 18px; }
@@ -285,7 +291,7 @@ summary { padding: 13px 16px; color: var(--green); cursor: pointer; font-family:
   input,
   select {
     min-height: 50px;
-    font-size: 16px; /* iPhoneで入力欄をタップした際の画面拡大を防ぎます */
+    font-size: 16px;
   }
 
   .button {
@@ -346,7 +352,7 @@ summary { padding: 13px 16px; color: var(--green); cursor: pointer; font-family:
   }
 
   table.detail-table {
-    min-width: 480px;
+    min-width: 520px;
   }
 
   .spot-wrap {
@@ -421,6 +427,7 @@ summary { padding: 13px 16px; color: var(--green); cursor: pointer; font-family:
     border-radius: 0;
   }
 }
+
 /* iPhone / iPad向け：表を読みやすくする */
 @media (max-width: 820px), (pointer: coarse) {
   .table-scroll {
@@ -444,18 +451,15 @@ summary { padding: 13px 16px; color: var(--green); cursor: pointer; font-family:
     font-size: 17px;
   }
 
-  /* 全員分のサマリー：横にスワイプして見られる幅にする */
   #season-table table.wide-table {
     min-width: 700px;
   }
 
-  /* 日別・過去分の表も文字サイズを保つ */
   #historical-table table.detail-table,
   #day-table table.detail-table {
-    min-width: 540px;
+    min-width: 580px;
   }
 
-  /* 横にスクロールしても選手名の列は固定 */
   #season-table table.wide-table thead th:first-child,
   #season-table table.wide-table tbody td:first-child,
   #season-table table.wide-table tfoot th:first-child {
@@ -475,7 +479,6 @@ summary { padding: 13px 16px; color: var(--green); cursor: pointer; font-family:
     box-shadow: 2px 0 4px rgba(20, 45, 65, .10);
   }
 
-  /* 選手個人のサマリー表は画面幅に収める */
   #profile-dialog table.detail-table {
     width: 100%;
     min-width: 100%;
@@ -489,7 +492,6 @@ summary { padding: 13px 16px; color: var(--green); cursor: pointer; font-family:
     overflow-wrap: anywhere;
   }
 
-  /* 過去の数字を入力する欄も押しやすく */
   #historical-table input {
     min-height: 48px;
     font-size: 18px;
@@ -499,94 +501,6 @@ summary { padding: 13px 16px; color: var(--green); cursor: pointer; font-family:
   #season-table td button {
     min-height: 44px;
     font-size: 15px;
-  }
-}
-/* iPhone / iPad：保護者が読みやすい文字サイズに */
-@media (max-width: 1024px), (pointer: coarse) {
-  body {
-    font-size: 18px;
-    line-height: 1.6;
-  }
-
-  .subtitle {
-    font-size: 17px;
-    line-height: 1.5;
-  }
-
-  .help,
-  .role-note,
-  .notice,
-  .message,
-  .game-row small {
-    font-size: 17px;
-    line-height: 1.65;
-  }
-
-  .small-note,
-  .footer,
-  .caption,
-  .metric span,
-  label {
-    font-size: 16px;
-    line-height: 1.6;
-  }
-
-  h2,
-  .dialog-head h2 {
-    font-size: 27px;
-    line-height: 1.25;
-  }
-
-  h3,
-  summary {
-    font-size: 22px;
-    line-height: 1.4;
-  }
-
-  .button {
-    min-height: 48px;
-    padding: 10px 14px;
-    font-size: 17px;
-  }
-
-  input,
-  select {
-    min-height: 50px;
-    font-size: 18px;
-  }
-
-  .badge,
-  .count-badge,
-  .save-status {
-    font-size: 14px;
-  }
-
-  .metric strong {
-    font-size: 25px;
-  }
-
-  .candidate strong {
-    font-size: 20px;
-  }
-
-  .candidate p {
-    font-size: 16px;
-    line-height: 1.55;
-  }
-
-  table {
-    font-size: 18px;
-    line-height: 1.45;
-  }
-
-  th {
-    font-size: 16px;
-    line-height: 1.4;
-  }
-
-  th,
-  td {
-    padding: 13px 10px;
   }
 }
 
@@ -1056,6 +970,9 @@ summary { padding: 13px 16px; color: var(--green); cursor: pointer; font-family:
         <h2 data-i18n="recordPlayTitle"></h2>
         <p class="help" data-i18n="fieldHelp"></p>
 
+        <!-- Offense Section Header -->
+        <h3 data-i18n="offense">Offense</h3>
+
         <div class="field" role="group" data-i18n-aria="fieldAria">
           <div class="endzone top"></div>
           <div class="endzone bottom"></div>
@@ -1079,6 +996,25 @@ summary { padding: 13px 16px; color: var(--green); cursor: pointer; font-family:
         <div class="touch-row">
           <span id="touch-count"></span>
           <button id="clear-touches" class="button button-secondary" type="button" data-i18n="clearTouches"></button>
+        </div>
+
+        <!-- Defense Section -->
+        <div class="defense-section">
+          <h3 data-i18n="defense">Defense</h3>
+          <div class="roles">
+            <label>
+              <span data-i18n="flagPull">Flag Pull</span>
+              <select id="flag-pull-select"></select>
+            </label>
+            <label>
+              <span data-i18n="passBlock">Pass Block</span>
+              <select id="pass-block-select"></select>
+            </label>
+            <label>
+              <span data-i18n="interception">Interception</span>
+              <select id="interception-select"></select>
+            </label>
+          </div>
         </div>
 
         <div class="actions">
@@ -1252,6 +1188,17 @@ const TEXT = {
     roleNote: "QBとボール運びの選手はタッチにも自動加算します。それ以外に触れた選手は、フィールド上の選手をタップしてください。",
     extraTouches: "追加タッチ選択：{count}人",
     clearTouches: "タッチをクリア",
+
+    offense: "オフェンス",
+    defense: "ディフェンス",
+    flagPull: "Flag Pull (フラッグプル)",
+    passBlock: "Pass Block (パスブロック)",
+    interception: "Interception (インターセプト)",
+    flagPullShort: "Flag Pull",
+    passBlockShort: "Pass Block",
+    intShort: "INT",
+    none: "なし",
+
     recordPlay: "このプレーを記録",
     undo: "1件戻す",
     allFive: "5つの場所すべてに選手を設定してください。未設定：{areas}",
@@ -1391,6 +1338,17 @@ const TEXT = {
     roleNote: "The QB and ball carrier are automatically counted as touches. Tap other players who touched the ball.",
     extraTouches: "Additional touches selected: {count}",
     clearTouches: "Clear touches",
+
+    offense: "Offense",
+    defense: "Defense",
+    flagPull: "Flag Pull",
+    passBlock: "Pass Block",
+    interception: "Interception",
+    flagPullShort: "Flag Pull",
+    passBlockShort: "Pass Block",
+    intShort: "INT",
+    none: "None",
+
     recordPlay: "Record play",
     undo: "Undo last",
     allFive: "Assign all five spots. Missing: {areas}",
@@ -1495,6 +1453,9 @@ let medalDirty = false;
 let pendingTouches = new Set();
 let pendingQB = "";
 let pendingCarry = "";
+let pendingFlagPull = "";
+let pendingPassBlock = "";
+let pendingInterception = "";
 let activeSpot = "";
 let activeUserId = "";
 let startPromise = null;
@@ -1593,6 +1554,20 @@ function roleCounts(role) {
 
   allPlays().forEach(play => {
     const id = play[column];
+    if (id && result.has(id)) {
+      result.set(id, result.get(id) + 1);
+    }
+  });
+
+  return result;
+}
+
+function getDefenseCounts(role) {
+  const result = new Map(app.players.map(player => [player.id, 0]));
+
+  allPlays().forEach(play => {
+    const def = play.lineup?._defense || play.lineup?.defense || {};
+    const id = def[role];
     if (id && result.has(id)) {
       result.set(id, result.get(id) + 1);
     }
@@ -1805,7 +1780,7 @@ function renderSeasonSummary() {
     row.append(el("td", "", String(m)));
 
     const action = document.createElement("td");
-    const button = el("button", "button button-secondary", t("summary"));
+    const button = el("button", "button button-secondary summary-button", t("summary"));
     button.type = "button";
     button.addEventListener("click", () => openProfile(player.id));
     action.append(button);
@@ -2003,6 +1978,9 @@ function dayCounts(game) {
   const qb = new Map(app.players.map(player => [player.id, 0]));
   const carry = new Map(app.players.map(player => [player.id, 0]));
   const touches = new Map(app.players.map(player => [player.id, 0]));
+  const flagPulls = new Map(app.players.map(player => [player.id, 0]));
+  const passBlocks = new Map(app.players.map(player => [player.id, 0]));
+  const interceptions = new Map(app.players.map(player => [player.id, 0]));
 
   game.plays.forEach(play => {
     const q = play.quarterback_player_id;
@@ -2018,13 +1996,24 @@ function dayCounts(game) {
     touched.forEach(id => {
       if (touches.has(id)) touches.set(id, touches.get(id) + 1);
     });
+
+    const def = play.lineup?._defense || play.lineup?.defense || {};
+    if (def.flag_pull && flagPulls.has(def.flag_pull)) {
+      flagPulls.set(def.flag_pull, flagPulls.get(def.flag_pull) + 1);
+    }
+    if (def.pass_block && passBlocks.has(def.pass_block)) {
+      passBlocks.set(def.pass_block, passBlocks.get(def.pass_block) + 1);
+    }
+    if (def.interception && interceptions.has(def.interception)) {
+      interceptions.set(def.interception, interceptions.get(def.interception) + 1);
+    }
   });
 
-  return { qb, carry, touches };
+  return { qb, carry, touches, flagPulls, passBlocks, interceptions };
 }
 
 function renderDaySummary(game) {
-  const { qb, carry, touches } = dayCounts(game);
+  const { qb, carry, touches, flagPulls, passBlocks, interceptions } = dayCounts(game);
   const metrics = $("#day-metrics");
   metrics.replaceChildren();
 
@@ -2037,13 +2026,13 @@ function renderDaySummary(game) {
   const qbMin = qbValues.length ? Math.min(...qbValues) : 0;
   const qbMax = qbValues.length ? Math.max(...qbValues) : 0;
 
-  // QB機会0回の選手を対象にCarry最少1位を算出
+  // QB機会0回の選手を対象にCarry最少1位のみを算出（ハイライト用）
   const noQbPlayers = app.players.filter(player => (qb.get(player.id) || 0) === 0);
   const noQbCarryValues = noQbPlayers.map(player => carry.get(player.id) || 0);
   const carryMin = noQbCarryValues.length ? Math.min(...noQbCarryValues) : null;
   const carryMax = noQbCarryValues.length ? Math.max(...noQbCarryValues) : null;
 
-  // Touches最少1位・2位を算出
+  // Touches最少1位・2位を算出（最少1位: 太字800、最少2位: normal400）
   const allTouchValues = app.players.map(player => touches.get(player.id) || 0);
   const uniqueTouchValues = [...new Set(allTouchValues)].sort((a, b) => a - b);
   const firstMinTouch = uniqueTouchValues.length > 0 ? uniqueTouchValues[0] : null;
@@ -2055,8 +2044,18 @@ function renderDaySummary(game) {
 
   const head = document.createElement("thead");
   const header = document.createElement("tr");
-  [t("player"), t("qbOpp"), t("carryOpp"), t("profileTouch"), t("medals")]
-    .forEach(label => header.append(el("th", "", label)));
+
+  [
+    t("player"),
+    t("qbOpp"),
+    t("carryOpp"),
+    t("profileTouch"),
+    t("flagPullShort"),
+    t("passBlockShort"),
+    t("intShort"),
+    t("medals")
+  ].forEach(label => header.append(el("th", "", label)));
+
   head.append(header);
   table.append(head);
 
@@ -2066,6 +2065,10 @@ function renderDaySummary(game) {
     const q = qb.get(player.id) || 0;
     const c = carry.get(player.id) || 0;
     const tch = touches.get(player.id) || 0;
+    const fp = flagPulls.get(player.id) || 0;
+    const pb = passBlocks.get(player.id) || 0;
+    const ic = interceptions.get(player.id) || 0;
+
     const row = document.createElement("tr");
 
     row.append(el("td", "name-cell", player.name));
@@ -2075,7 +2078,7 @@ function renderDaySummary(game) {
     if (qbMin < qbMax && q === qbMin) qCell.classList.add("low");
     row.append(qCell);
 
-    // Carryセル (QB機会0の選手のみ、最少1位のみハイライト)
+    // Carryセル (QB機会0の選手のみ、最少のみハイライト)
     const cCell = el("td", "", String(c));
     if (q === 0 && carryMin !== null && carryMax !== null && carryMin < carryMax && c === carryMin) {
       cCell.classList.add("low");
@@ -2095,8 +2098,14 @@ function renderDaySummary(game) {
     }
     row.append(tCell);
 
+    // Defenseセル (Flag Pull, Pass Block, INT)
+    row.append(el("td", "", String(fp)));
+    row.append(el("td", "", String(pb)));
+    row.append(el("td", "", String(ic)));
+
     // Medalsセル
     row.append(el("td", "", game.medals.some(m => m.player_id === player.id) ? "1" : "0"));
+
     body.append(row);
   });
 
@@ -2217,7 +2226,9 @@ function renderField(game) {
 
   $("#touch-count").textContent = t("extraTouches", { count: pendingTouches.size });
   $("#clear-touches").disabled = pendingTouches.size === 0;
+
   renderRoleSelectors(game);
+  renderDefenseSelectors();
 }
 
 function renderRoleSelectors(game) {
@@ -2255,6 +2266,34 @@ function renderRoleSelectors(game) {
 
   qb.value = pendingQB;
   carry.value = pendingCarry;
+}
+
+function renderDefenseSelectors() {
+  const flagPullSelect = $("#flag-pull-select");
+  const passBlockSelect = $("#pass-block-select");
+  const interceptionSelect = $("#interception-select");
+
+  [
+    { select: flagPullSelect, selected: pendingFlagPull },
+    { select: passBlockSelect, selected: pendingPassBlock },
+    { select: interceptionSelect, selected: pendingInterception }
+  ].forEach(({ select, selected }) => {
+    select.replaceChildren();
+
+    const option = document.createElement("option");
+    option.value = "";
+    option.textContent = t("none");
+    select.append(option);
+
+    app.players.forEach(player => {
+      const opt = document.createElement("option");
+      opt.value = player.id;
+      opt.textContent = player.name;
+      select.append(opt);
+    });
+
+    select.value = selected || "";
+  });
 }
 
 function renderRecentPlays(game) {
@@ -2326,6 +2365,9 @@ function openGame(gameId) {
   pendingTouches.clear();
   pendingQB = "";
   pendingCarry = "";
+  pendingFlagPull = "";
+  pendingPassBlock = "";
+  pendingInterception = "";
   medalDraftGameId = gameId;
   medalDraft = [...game.medals]
     .sort((a, b) => a.award_slot - b.award_slot)
@@ -2606,6 +2648,10 @@ function openProfile(playerId) {
   const touches = touchCounts().get(playerId) || 0;
   const medals = medalCounts().get(playerId) || 0;
 
+  const flagPullCount = getDefenseCounts("flag_pull").get(playerId) || 0;
+  const passBlockCount = getDefenseCounts("pass_block").get(playerId) || 0;
+  const interceptionCount = getDefenseCounts("interception").get(playerId) || 0;
+
   $("#profile-title").textContent = player.name;
   const content = $("#profile-content");
   content.replaceChildren();
@@ -2615,7 +2661,10 @@ function openProfile(playerId) {
     [t("profileQB"), formatCount(qbPast + qbTool)],
     [t("profileCarry"), formatCount(carryPast + carryTool)],
     [t("profileTouch"), String(touches)],
-    [t("profileMedals"), formatMedalCount(medals)]
+    [t("profileMedals"), formatMedalCount(medals)],
+    [t("flagPullShort"), String(flagPullCount)],
+    [t("passBlockShort"), String(passBlockCount)],
+    [t("intShort"), String(interceptionCount)]
   ].forEach(([label, value]) => {
     const metric = el("div", "profile-metric");
     metric.append(el("span", "", label), el("strong", "", value));
@@ -2874,6 +2923,18 @@ $("#carry-select").addEventListener("change", event => {
   if (game) renderField(game);
 });
 
+$("#flag-pull-select").addEventListener("change", event => {
+  pendingFlagPull = event.target.value;
+});
+
+$("#pass-block-select").addEventListener("change", event => {
+  pendingPassBlock = event.target.value;
+});
+
+$("#interception-select").addEventListener("change", event => {
+  pendingInterception = event.target.value;
+});
+
 $("#clear-touches").addEventListener("click", () => {
   pendingTouches.clear();
   const game = getGame();
@@ -2917,6 +2978,15 @@ $("#record-play").addEventListener("click", async () => {
     0
   ) + 1;
 
+  const lineupData = {
+    ...game.lineup,
+    _defense: {
+      flag_pull: pendingFlagPull || null,
+      pass_block: pendingPassBlock || null,
+      interception: pendingInterception || null
+    }
+  };
+
   isSavingPlay = true;
   $("#record-play").disabled = true;
 
@@ -2928,7 +2998,7 @@ $("#record-play").addEventListener("click", async () => {
       play_number: nextPlayNumber,
       quarterback_player_id: pendingQB,
       ball_carrier_player_id: pendingCarry || null,
-      lineup: { ...game.lineup },
+      lineup: lineupData,
       touched_player_ids: [...touched]
     });
 
@@ -2943,6 +3013,10 @@ $("#record-play").addEventListener("click", async () => {
   pendingTouches.clear();
   pendingQB = "";
   pendingCarry = "";
+  pendingFlagPull = "";
+  pendingPassBlock = "";
+  pendingInterception = "";
+
   await loadCloudData({ silent: true });
   setMessage("play-message", t("playSaved"), "success");
 });
