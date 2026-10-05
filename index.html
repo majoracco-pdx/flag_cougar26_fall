@@ -985,10 +985,7 @@ summary { padding: 13px 16px; color: var(--green); cursor: pointer; font-family:
         <div id="season-candidates" class="candidates"></div>
         <p id="unassigned-qb" class="small-note"></p>
         <div class="actions">
-  <button id="open-full-summary"
-          class="button button-secondary"
-          type="button"
-          data-i18n="openFullSummary">
+  <button id="open-full-summary" class="button button-secondary" type="button" data-i18n="openFullSummary">
     全員分を大きく見る
   </button>
 </div>
@@ -1130,17 +1127,12 @@ summary { padding: 13px 16px; color: var(--green); cursor: pointer; font-family:
   </div>
   <div id="profile-content" class="dialog-content"></div>
 </dialog>
-<dialog id="full-summary-dialog"
-        class="profile-dialog full-summary-dialog"
-        aria-labelledby="full-summary-title">
+<dialog id="full-summary-dialog" class="profile-dialog full-summary-dialog" aria-labelledby="full-summary-title">
   <div class="dialog-head">
     <h2 id="full-summary-title" data-i18n="fullSummaryTitle">
       全選手のサマリー
     </h2>
-    <button id="close-full-summary"
-            class="button button-secondary"
-            type="button"
-            data-i18n="close">
+    <button id="close-full-summary" class="button button-secondary" type="button" data-i18n="close">
       閉じる
     </button>
   </div>
@@ -1190,6 +1182,7 @@ const TEXT = {
     candidatesTitle: "次に機会を回したい選手",
     qbOpp: "Quarter Back opportunities",
     carryOpp: "All carrying opportunities",
+    touches: "タッチ",
     allTied: "全員同数：{count}",
     range: "最少 {min} ／ 最多 {max}",
     candidates: "候補：{names}",
@@ -1201,12 +1194,12 @@ const TEXT = {
     medals: "メダル",
     summary: "サマリー",
     teamTotal: "チーム合計",
-　openFullSummary: "全員分を大きく見る",
-　fullSummaryTitle: "全選手のサマリー",
-　fullSummaryHelp: "選手ごとのQB機会・ボール運び機会・メダル数です。",
-　shortQB: "QB",
-　shortCarry: "運び",
-　shortMedals: "メダル",
+    openFullSummary: "全員分を大きく見る",
+    fullSummaryTitle: "全選手のサマリー",
+    fullSummaryHelp: "選手ごとのQB機会・ボール運び機会・メダル数です。",
+    shortQB: "QB",
+    shortCarry: "運び",
+    shortMedals: "メダル",
     gameDaysTitle: "試合日ごとの記録",
     gameDaysHelp: "日付を選ぶと、その日の集計と記録画面が開きます。",
     game: "試合 {number}",
@@ -1328,6 +1321,7 @@ const TEXT = {
     candidatesTitle: "Players to consider next",
     qbOpp: "Quarter Back opportunities",
     carryOpp: "All carrying opportunities",
+    touches: "Touches",
     allTied: "All tied: {count}",
     range: "Fewest {min} / most {max}",
     candidates: "Candidates: {names}",
@@ -1339,12 +1333,12 @@ const TEXT = {
     medals: "Medals",
     summary: "Summary",
     teamTotal: "Team total",
-　openFullSummary: "View all players",
-　fullSummaryTitle: "All-player summary",
-　fullSummaryHelp: "QB opportunities, carrying opportunities, and medals for every player.",
-　shortQB: "QB",
-　shortCarry: "Carry",
-　shortMedals: "Medals",
+    openFullSummary: "View all players",
+    fullSummaryTitle: "All-player summary",
+    fullSummaryHelp: "QB opportunities, carrying opportunities, and medals for every player.",
+    shortQB: "QB",
+    shortCarry: "Carry",
+    shortMedals: "Medals",
     gameDaysTitle: "Records by game day",
     gameDaysHelp: "Choose a date to open that game's summary and recording screen.",
     game: "Game {number}",
@@ -1478,16 +1472,6 @@ function loadLanguagePreference() {
       ? "en"
       : "ja";
   } catch (error) {
-    return "ja";
-  }
-}
-
-function loadLanguagePreference() {
-  try {
-    return localStorage.getItem("moments-of-glory-language") === "en"
-      ? "en"
-      : "ja";
-  } catch {
     return "ja";
   }
 }
@@ -1729,10 +1713,12 @@ function renderSeasonSummary() {
   const qb = roleCounts("qb");
   const carry = roleCounts("carry");
   const medals = medalCounts();
+  const touches = touchCounts();
 
   const qbTotal = [...qb.values()].reduce((sum, value) => sum + value, 0);
   const carryTotal = [...carry.values()].reduce((sum, value) => sum + value, 0);
   const medalTotal = [...medals.values()].reduce((sum, value) => sum + value, 0);
+  const touchTotal = [...touches.values()].reduce((sum, value) => sum + value, 0);
 
   addMetric(metricContainer, t("teamQB"), formatCount(qbTotal));
   addMetric(metricContainer, t("teamCarry"), formatCount(carryTotal));
@@ -1753,11 +1739,16 @@ function renderSeasonSummary() {
   $("#unassigned-qb").className = unassigned ? "notice" : "notice good";
 
   const qbValues = app.players.map(player => qb.get(player.id) || 0);
-  const carryValues = app.players.map(player => carry.get(player.id) || 0);
   const qbMin = Math.min(...qbValues);
   const qbMax = Math.max(...qbValues);
-  const carryMin = Math.min(...carryValues);
-  const carryMax = Math.max(...carryValues);
+
+  // QB機会が0回の選手のみを抽出してボール運び機会の最少1位・2位を算出
+  const noQbPlayers = app.players.filter(player => (qb.get(player.id) || 0) === 0);
+  const noQbCarryValues = noQbPlayers.map(player => carry.get(player.id) || 0);
+  const uniqueCarryValues = [...new Set(noQbCarryValues)].sort((a, b) => a - b);
+
+  const firstMinCarry = uniqueCarryValues.length > 0 ? uniqueCarryValues[0] : null;
+  const secondMinCarry = uniqueCarryValues.length > 1 ? uniqueCarryValues[1] : null;
 
   const table = document.createElement("table");
   table.className = "wide-table";
@@ -1765,8 +1756,16 @@ function renderSeasonSummary() {
 
   const head = document.createElement("thead");
   const header = document.createElement("tr");
-  [t("player"), t("qbOpp"), t("carryOpp"), t("medals"), t("summary")]
-    .forEach(label => header.append(el("th", "", label)));
+
+  [
+    t("player"),
+    t("qbOpp"),
+    t("carryOpp"),
+    t("touches"),
+    t("medals"),
+    t("summary")
+  ].forEach(label => header.append(el("th", "", label)));
+
   head.append(header);
   table.append(head);
 
@@ -1776,18 +1775,33 @@ function renderSeasonSummary() {
     const q = qb.get(player.id) || 0;
     const c = carry.get(player.id) || 0;
     const m = medals.get(player.id) || 0;
+    const tch = touches.get(player.id) || 0;
     const row = document.createElement("tr");
 
     row.append(el("td", "name-cell", player.name));
 
+    // QBセル
     const qCell = el("td", "", String(q));
     if (qbMin < qbMax && q === qbMin) qCell.classList.add("low");
     row.append(qCell);
 
+    // Carryセル (QB機会0の選手のみ、最少1位は太字、最少2位はnormalでハイライト)
     const cCell = el("td", "", String(c));
-    if (carryMin < carryMax && c === carryMin) cCell.classList.add("low");
+    if (q === 0) {
+      if (firstMinCarry !== null && c === firstMinCarry) {
+        cCell.classList.add("low");
+        cCell.style.fontWeight = "800";
+      } else if (secondMinCarry !== null && c === secondMinCarry) {
+        cCell.classList.add("low");
+        cCell.style.fontWeight = "400";
+      }
+    }
     row.append(cCell);
 
+    // Touchesセル
+    row.append(el("td", "", String(tch)));
+
+    // Medalsセル
     row.append(el("td", "", String(m)));
 
     const action = document.createElement("td");
@@ -1807,6 +1821,7 @@ function renderSeasonSummary() {
   totalRow.append(el("th", "", t("teamTotal")));
   totalRow.append(el("td", "", String(qbTotal)));
   totalRow.append(el("td", "", String(carryTotal)));
+  totalRow.append(el("td", "", String(touchTotal)));
   totalRow.append(el("td", "", String(medalTotal)));
   totalRow.append(el("td", "", ""));
   foot.append(totalRow);
@@ -2633,7 +2648,6 @@ function openProfile(playerId) {
   });
   daily.append(dailyBody);
   content.append(daily);
-  content.append(el("p", "small-note", t("pastNotByDay")));
 
   content.append(el("h3", "", t("profileAreas")));
   const areas = areaCounts(playerId);
