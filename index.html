@@ -104,7 +104,7 @@ label { display: block; color: #405561; font-size: 12px; }
 .message.info { color: #4c6575; }
 .notice {
   margin: 9px 0; padding: 9px 11px; border: 1px solid #f0d99b;
-  border-radius: 99px; color: #6c5110; background: #fff8e4;
+  border-radius: 9px; color: #6c5110; background: #fff8e4;
   font-size: 13px; line-height: 1.5;
 }
 .notice.good { border-color: #c9dfce; color: var(--green); background: var(--pale); }
@@ -1195,7 +1195,7 @@ summary { padding: 13px 16px; color: var(--green); cursor: pointer; font-family:
 const PAST_OFFENSIVE_PLAYS = 71;
 const SPOTS = ["A", "B", "C", "D", "E"];
 
-// Game 1-3 の過去スタッツ（正確な固定初期値）
+// Game 1-3 の正確な固定初期値
 const COACH_PLAYERS = [
   { name: "Grant",    qb: 20, carry: 4, touch: 24 },
   { name: "John",     qb: 12, carry: 5, touch: 17 },
@@ -1655,19 +1655,27 @@ function cloneHistorical(source) {
 
 function historicalValue(playerId, role) {
   const player = playerById(playerId);
-  const source = player
-    ? COACH_PLAYERS.find(item => item.name.toLowerCase() === player.name.toLowerCase())
+
+  // 1. ドラフト編集中の値（手動変更時）
+  if (historicalDraft[playerId] && historicalDraft[playerId][role] !== undefined) {
+    return Number(historicalDraft[playerId][role]) || 0;
+  }
+
+  // 2. COACH_PLAYERS (Game 1-3の正確な統計) から優先取得
+  const coachData = player
+    ? COACH_PLAYERS.find(item => item.name.trim().toLowerCase() === player.name.trim().toLowerCase())
     : null;
 
-  const defaultVal = source ? (source[role] ?? 0) : 0;
+  if (coachData && coachData[role] !== undefined) {
+    return Number(coachData[role]) || 0;
+  }
 
-  if (historicalDraft[playerId] && historicalDraft[playerId][role] !== undefined) {
-    return Number(historicalDraft[playerId][role]);
-  }
+  // 3. DBから取得した値または0
   if (app.historical[playerId] && app.historical[playerId][role] !== undefined) {
-    return Number(app.historical[playerId][role]);
+    return Number(app.historical[playerId][role]) || 0;
   }
-  return defaultVal;
+
+  return 0;
 }
 
 function allPlays() {
@@ -1869,7 +1877,7 @@ function renderSeasonSummary() {
   const head = document.createElement("thead");
   const header = document.createElement("tr");
 
-  // カラム順: Player, Quarter Back opportunities, All carrying opportunities, Total Touches, Medals
+  // カラム順: Player, QB opportunities, All carrying opportunities, Total Touches, Medals
   [
     t("player"),
     t("qbOpp"),
@@ -1919,7 +1927,7 @@ function renderSeasonSummary() {
     // Total Touchesセル（4番目）
     row.append(el("td", "", String(tch)));
 
-    // Medalsセル（5番目・一番右）
+    // Medalsセル（5番目）
     row.append(el("td", "", String(m)));
 
     body.append(row);
