@@ -111,7 +111,20 @@ label { display: block; color: #405561; font-size: 12px; }
 
 .table-scroll { width: 100%; overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
-table.wide-table { min-width: 570px; }
+
+/* 全試合サマリーテーブルの均等カラム幅設定 (各20%) */
+#season-table table.wide-table {
+  table-layout: fixed;
+  width: 100%;
+  min-width: 650px;
+}
+#season-table table.wide-table th,
+#season-table table.wide-table td {
+  width: 20%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
 table.detail-table { min-width: 480px; }
 th, td { padding: 8px 7px; border-bottom: 1px solid #e6edf1; text-align: center; }
 th { color: var(--green-dark); background: var(--pale); font-size: 12px; }
@@ -367,8 +380,8 @@ summary { padding: 13px 16px; color: var(--green); cursor: pointer; font-family:
     padding: 12px 10px;
   }
 
-  table.wide-table {
-    min-width: 620px;
+  #season-table table.wide-table {
+    min-width: 650px;
   }
 
   table.detail-table {
@@ -472,7 +485,7 @@ summary { padding: 13px 16px; color: var(--green); cursor: pointer; font-family:
   }
 
   #season-table table.wide-table {
-    min-width: 700px;
+    min-width: 650px;
   }
 
   #historical-table table.detail-table,
@@ -1240,8 +1253,8 @@ const TEXT = {
     teamCarry: "チーム ボール運び機会",
     teamMedals: "チーム メダル",
     candidatesTitle: "次に機会を回したい選手",
-    qbOpp: "Quarter Back opportunities",
-    carryOpp: "All carrying opportunities",
+    qbOpp: "Quarter Back oppo",
+    carryOpp: "All carrying oppo",
     touches: "Total Touches",
     allTied: "全員同数：{count}",
     range: "最少 {min} ／ 最多 {max}",
@@ -1250,8 +1263,8 @@ const TEXT = {
     unassignedQB: "Game 1-3のQB機会で未割当：{count}回",
     noUnassigned: "Game 1-3のQB機会は71回で、全員分が集計されています。",
     summaryCaption: "黄色の数字は最少（1位）、オレンジの数字は2番目に最少の選手です。",
-    player: "選手",
-    medals: "メダル",
+    player: "Player",
+    medals: "Medals",
     summary: "サマリー",
     teamTotal: "チーム合計",
     openFullSummary: "全員分を大きく見る",
@@ -1390,8 +1403,8 @@ const TEXT = {
     teamCarry: "Team carrying opportunities",
     teamMedals: "Team medals",
     candidatesTitle: "Players to consider next",
-    qbOpp: "Quarter Back opportunities",
-    carryOpp: "All carrying opportunities",
+    qbOpp: "Quarter Back oppo",
+    carryOpp: "All carrying oppo",
     touches: "Total Touches",
     allTied: "All tied: {count}",
     range: "Fewest {min} / most {max}",
@@ -1660,7 +1673,7 @@ function cloneHistorical(source) {
 function historicalValue(playerId, role) {
   const player = playerById(playerId);
 
-  // 1. ドラフト手動変更時 (ユーザーが画面で過去数値を直接書き換えた場合)
+  // 1. ドラフト手動変更時
   if (historicalDirty && historicalDraft[playerId] && historicalDraft[playerId][role] !== undefined) {
     return Number(historicalDraft[playerId][role]) || 0;
   }
@@ -1873,7 +1886,7 @@ function renderSeasonSummary() {
     : t("noUnassigned");
   $("#unassigned-qb").className = unassigned ? "notice" : "notice good";
 
-  // ★ 選手一覧を Total Touches 降順（同じなら名前順）でソート
+  // 選手一覧を Total Touches 降順（同じなら名前順）でソート
   const sortedPlayers = [...app.players].sort((a, b) => {
     const tA = touches.get(a.id) || 0;
     const tB = touches.get(b.id) || 0;
@@ -1881,7 +1894,7 @@ function renderSeasonSummary() {
     return a.name.localeCompare(b.name);
   });
 
-  // Total Touchesのユニーク値（最少1位・最少2位）
+  // Total Touchesの最少1位・最少2位（ハイライト用）
   const touchVals = [...new Set(app.players.map(p => touches.get(p.id) || 0))].sort((a, b) => a - b);
   const touchMin1 = touchVals.length > 0 ? touchVals[0] : null;
   const touchMin2 = touchVals.length > 1 ? touchVals[1] : null;
@@ -1893,7 +1906,7 @@ function renderSeasonSummary() {
   const head = document.createElement("thead");
   const header = document.createElement("tr");
 
-  // カラム順: Player, Quarter Back opportunities, All carrying opportunities, Total Touches, Medals
+  // カラム順: Player, Quarter Back oppo, All carrying oppo, Total Touches, Medals
   [
     t("player"),
     t("qbOpp"),
@@ -2170,7 +2183,7 @@ function renderDaySummary(game) {
   addMetric(metrics, t("dayQB"), String([...qb.values()].reduce((a, b) => a + b, 0)));
   addMetric(metrics, t("dayCarry"), String([...carry.values()].reduce((a, b) => a + b, 0)));
 
-  // Touches 1位・2位
+  // Touches 1位・2位 (Day Summary用)
   const allDayTouchValues = app.players.map(player => touches.get(player.id) || 0);
   const uniqueDayTouchValues = [...new Set(allDayTouchValues)].sort((a, b) => a - b);
   const dayTouchMin1 = uniqueDayTouchValues.length > 0 ? uniqueDayTouchValues[0] : null;
