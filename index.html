@@ -133,6 +133,7 @@ td.name-cell, th.name-cell { text-align: left; }
 }
 
 td.low { color: var(--green-dark); background: #fff2a5; font-weight: 800; }
+td.low-orange { color: #7c4300; background: #ffe0b2; font-weight: 400; }
 tfoot th, tfoot td { border-top: 2px solid var(--green); background: var(--pale); font-weight: 800; }
 .caption { padding: 6px 3px; color: var(--muted); text-align: left; font-size: 12px; }
 
@@ -585,7 +586,7 @@ summary { padding: 13px 16px; color: var(--green); cursor: pointer; font-family:
   }
 
   .candidate strong {
-    font-size: 20px;
+    font-size: 19px;
   }
 
   .candidate p {
@@ -1656,7 +1657,7 @@ function cloneHistorical(source) {
 function historicalValue(playerId, role) {
   const player = playerById(playerId);
 
-  // 1. ドラフト手動変更時
+  // 1. ドラフト手動変更時 (ユーザーが画面で過去数値を直接書き換えた場合)
   if (historicalDirty && historicalDraft[playerId] && historicalDraft[playerId][role] !== undefined) {
     return Number(historicalDraft[playerId][role]) || 0;
   }
@@ -1814,6 +1815,17 @@ function renderCandidate(container, title, counts) {
   container.append(card);
 }
 
+function applyHighlight(cell, value, min1, min2, uniqueLen) {
+  if (uniqueLen <= 1) return;
+  if (min1 !== null && value === min1) {
+    cell.classList.add("low");
+    cell.style.fontWeight = "800";
+  } else if (min2 !== null && value === min2) {
+    cell.classList.add("low-orange");
+    cell.style.fontWeight = "400";
+  }
+}
+
 function renderSeasonSummary() {
   const metricContainer = $("#season-metrics");
   const candidateContainer = $("#season-candidates");
@@ -1858,17 +1870,28 @@ function renderSeasonSummary() {
     : t("noUnassigned");
   $("#unassigned-qb").className = unassigned ? "notice" : "notice good";
 
-  const qbValues = app.players.map(player => qb.get(player.id) || 0);
-  const qbMin = Math.min(...qbValues);
-  const qbMax = Math.max(...qbValues);
+  // ★ 選手一覧を Total Touches 降順（同じなら名前順）でソート
+  const sortedPlayers = [...app.players].sort((a, b) => {
+    const tA = touches.get(a.id) || 0;
+    const tB = touches.get(b.id) || 0;
+    if (tB !== tA) return tB - tA;
+    return a.name.localeCompare(b.name);
+  });
 
-  // QB機会が0回の選手のみを対象にcarry機会数を抽出
-  const noQbPlayers = app.players.filter(player => (qb.get(player.id) || 0) === 0);
-  const noQbCarryValues = noQbPlayers.map(player => carry.get(player.id) || 0);
-  const uniqueCarryValues = [...new Set(noQbCarryValues)].sort((a, b) => a - b);
+  // QBのユニーク値（最少1位・最少2位）
+  const qbVals = [...new Set(app.players.map(p => qb.get(p.id) || 0))].sort((a, b) => a - b);
+  const qbMin1 = qbVals.length > 0 ? qbVals[0] : null;
+  const qbMin2 = qbVals.length > 1 ? qbVals[1] : null;
 
-  const firstMinCarry = uniqueCarryValues.length > 0 ? uniqueCarryValues[0] : null;
-  const secondMinCarry = uniqueCarryValues.length > 1 ? uniqueCarryValues[1] : null;
+  // Carryのユニーク値（最少1位・最少2位）
+  const carryVals = [...new Set(app.players.map(p => carry.get(p.id) || 0))].sort((a, b) => a - b);
+  const carryMin1 = carryVals.length > 0 ? carryVals[0] : null;
+  const carryMin2 = carryVals.length > 1 ? carryVals[1] : null;
+
+  // Total Touchesのユニーク値（最少1位・最少2位）
+  const touchVals = [...new Set(app.players.map(p => touches.get(p.id) || 0))].sort((a, b) => a - b);
+  const touchMin1 = touchVals.length > 0 ? touchVals[0] : null;
+  const touchMin2 = touchVals.length > 1 ? touchVals[1] : null;
 
   const table = document.createElement("table");
   table.className = "wide-table";
@@ -1891,14 +1914,14 @@ function renderSeasonSummary() {
 
   const body = document.createElement("tbody");
 
-  app.players.forEach(player => {
+  sortedPlayers.forEach(player => {
     const q = qb.get(player.id) || 0;
     const c = carry.get(player.id) || 0;
     const m = medals.get(player.id) || 0;
     const tch = touches.get(player.id) || 0;
     const row = document.createElement("tr");
 
-    // 選手名をテキストリンクにし、クリックでopenProfileを呼ぶ
+    // 1. Player (名前リンク)
     const nameTd = el("td", "name-cell");
     const nameBtn = el("button", "name-link", player.name);
     nameBtn.type = "button";
@@ -1906,28 +1929,22 @@ function renderSeasonSummary() {
     nameTd.append(nameBtn);
     row.append(nameTd);
 
-    // QBセル
+    // 2. QBセル (最少1位:黄色800, 最少2位:オレンジ400)
     const qCell = el("td", "", String(q));
-    if (qbMin < qbMax && q === qbMin) qCell.classList.add("low");
+    applyHighlight(qCell, q, qbMin1, qbMin2, qbVals.length);
     row.append(qCell);
 
-    // Carryセル (QB機会0の選手のみ、最少1位は太字、最少2位はnormalでハイライト)
+    // 3. Carryセル (最少1位:黄色800, 最少2位:オレンジ400)
     const cCell = el("td", "", String(c));
-    if (q === 0) {
-      if (firstMinCarry !== null && c === firstMinCarry) {
-        cCell.classList.add("low");
-        cCell.style.fontWeight = "800";
-      } else if (secondMinCarry !== null && c === secondMinCarry) {
-        cCell.classList.add("low");
-        cCell.style.fontWeight = "400";
-      }
-    }
+    applyHighlight(cCell, c, carryMin1, carryMin2, carryVals.length);
     row.append(cCell);
 
-    // Total Touchesセル（4番目）
-    row.append(el("td", "", String(tch)));
+    // 4. Total Touchesセル (最少1位:黄色800, 最少2位:オレンジ400)
+    const tCell = el("td", "", String(tch));
+    applyHighlight(tCell, tch, touchMin1, touchMin2, touchVals.length);
+    row.append(tCell);
 
-    // Medalsセル（5番目）
+    // 5. Medalsセル
     row.append(el("td", "", String(m)));
 
     body.append(row);
@@ -2165,21 +2182,19 @@ function renderDaySummary(game) {
   addMetric(metrics, t("dayCarry"), String([...carry.values()].reduce((a, b) => a + b, 0)));
 
   // QB最小・最大
-  const qbValues = [...qb.values()];
-  const qbMin = qbValues.length ? Math.min(...qbValues) : 0;
-  const qbMax = qbValues.length ? Math.max(...qbValues) : 0;
+  const qbVals = [...new Set(app.players.map(p => qb.get(p.id) || 0))].sort((a, b) => a - b);
+  const qbMin1 = qbVals.length > 0 ? qbVals[0] : null;
+  const qbMin2 = qbVals.length > 1 ? qbVals[1] : null;
 
-  // QB機会0回の選手を対象にCarry最少1位のみを算出（最少1位のみハイライト）
-  const noQbPlayers = app.players.filter(player => (qb.get(player.id) || 0) === 0);
-  const noQbCarryValues = noQbPlayers.map(player => carry.get(player.id) || 0);
-  const carryMin = noQbCarryValues.length ? Math.min(...noQbCarryValues) : null;
-  const carryMax = noQbCarryValues.length ? Math.max(...noQbCarryValues) : null;
+  // Carry最小・最大
+  const carryVals = [...new Set(app.players.map(p => carry.get(p.id) || 0))].sort((a, b) => a - b);
+  const carryMin1 = carryVals.length > 0 ? carryVals[0] : null;
+  const carryMin2 = carryVals.length > 1 ? carryVals[1] : null;
 
-  // Touches最少1位・2位を算出（最少1位: 太字800、最少2位: 標準400）
-  const allTouchValues = app.players.map(player => touches.get(player.id) || 0);
-  const uniqueTouchValues = [...new Set(allTouchValues)].sort((a, b) => a - b);
-  const firstMinTouch = uniqueTouchValues.length > 0 ? uniqueTouchValues[0] : null;
-  const secondMinTouch = uniqueTouchValues.length > 1 ? uniqueTouchValues[1] : null;
+  // Touches最小1位・2位
+  const touchVals = [...new Set(app.players.map(p => touches.get(p.id) || 0))].sort((a, b) => a - b);
+  const touchMin1 = touchVals.length > 0 ? touchVals[0] : null;
+  const touchMin2 = touchVals.length > 1 ? touchVals[1] : null;
 
   const table = document.createElement("table");
   table.className = "detail-table";
@@ -2218,27 +2233,17 @@ function renderDaySummary(game) {
 
     // QBセル
     const qCell = el("td", "", String(q));
-    if (qbMin < qbMax && q === qbMin) qCell.classList.add("low");
+    applyHighlight(qCell, q, qbMin1, qbMin2, qbVals.length);
     row.append(qCell);
 
-    // Carryセル (QB機会0の選手のみ、最少1位のみハイライト)
+    // Carryセル
     const cCell = el("td", "", String(c));
-    if (q === 0 && carryMin !== null && carryMax !== null && carryMin < carryMax && c === carryMin) {
-      cCell.classList.add("low");
-    }
+    applyHighlight(cCell, c, carryMin1, carryMin2, carryVals.length);
     row.append(cCell);
 
-    // Touchesセル (最少1位は太字:800、最少2位は標準:400でハイライト)
+    // Touchesセル
     const tCell = el("td", "", String(tch));
-    if (uniqueTouchValues.length > 1) {
-      if (firstMinTouch !== null && tch === firstMinTouch) {
-        tCell.classList.add("low");
-        tCell.style.fontWeight = "800";
-      } else if (secondMinTouch !== null && tch === secondMinTouch) {
-        tCell.classList.add("low");
-        tCell.style.fontWeight = "400";
-      }
-    }
+    applyHighlight(tCell, tch, touchMin1, touchMin2, touchVals.length);
     row.append(tCell);
 
     // Defenseセル (Flag Pull, Pass Block, INT)
