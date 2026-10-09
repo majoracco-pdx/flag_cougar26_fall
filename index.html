@@ -1656,12 +1656,12 @@ function cloneHistorical(source) {
 function historicalValue(playerId, role) {
   const player = playerById(playerId);
 
-  // 1. ドラフト編集中の値（手動変更時）
-  if (historicalDraft[playerId] && historicalDraft[playerId][role] !== undefined) {
+  // 1. ドラフト手動変更時
+  if (historicalDirty && historicalDraft[playerId] && historicalDraft[playerId][role] !== undefined) {
     return Number(historicalDraft[playerId][role]) || 0;
   }
 
-  // 2. COACH_PLAYERS (Game 1-3の正確な統計) から優先取得
+  // 2. COACH_PLAYERS (Game 1-3の正確な固定統計) から優先取得
   const coachData = player
     ? COACH_PLAYERS.find(item => item.name.trim().toLowerCase() === player.name.trim().toLowerCase())
     : null;
@@ -1670,7 +1670,7 @@ function historicalValue(playerId, role) {
     return Number(coachData[role]) || 0;
   }
 
-  // 3. DBから取得した値または0
+  // 3. 上記に該当しない新規選手などの場合はDBの値または0
   if (app.historical[playerId] && app.historical[playerId][role] !== undefined) {
     return Number(app.historical[playerId][role]) || 0;
   }
@@ -1877,7 +1877,7 @@ function renderSeasonSummary() {
   const head = document.createElement("thead");
   const header = document.createElement("tr");
 
-  // カラム順: Player, QB opportunities, All carrying opportunities, Total Touches, Medals
+  // カラム順: Player, Quarter Back opportunities, All carrying opportunities, Total Touches, Medals
   [
     t("player"),
     t("qbOpp"),
@@ -2659,11 +2659,16 @@ async function loadCloudData({ silent = false } = {}) {
 
     app.players = results[0].data || [];
 
+    // COACH_PLAYERSの最新スタッツを過去分として最優先設定
     app.historical = {};
-    (results[1].data || []).forEach(row => {
-      app.historical[row.player_id] = {
-        qb: Number(row.qb_opportunities) || 0,
-        carry: Number(row.carrying_opportunities) || 0
+    app.players.forEach(player => {
+      const coach = COACH_PLAYERS.find(
+        item => item.name.trim().toLowerCase() === player.name.trim().toLowerCase()
+      );
+      app.historical[player.id] = {
+        qb: coach ? coach.qb : 0,
+        carry: coach ? coach.carry : 0,
+        touch: coach ? coach.touch : 0
       };
     });
 
