@@ -116,6 +116,22 @@ table.detail-table { min-width: 480px; }
 th, td { padding: 8px 7px; border-bottom: 1px solid #e6edf1; text-align: center; }
 th { color: var(--green-dark); background: var(--pale); font-size: 12px; }
 td.name-cell, th.name-cell { text-align: left; }
+
+.name-link {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--green);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+  text-align: left;
+}
+.name-link:hover {
+  color: var(--green-dark);
+}
+
 td.low { color: var(--green-dark); background: #fff2a5; font-weight: 800; }
 tfoot th, tfoot td { border-top: 2px solid var(--green); background: var(--pale); font-weight: 800; }
 .caption { padding: 6px 3px; color: var(--muted); text-align: left; font-size: 12px; }
@@ -291,7 +307,7 @@ summary { padding: 13px 16px; color: var(--green); cursor: pointer; font-family:
   input,
   select {
     min-height: 50px;
-    font-size: 16px; /* iPhoneで入力欄をタップした際の画面拡大を防ぎます */
+    font-size: 16px;
   }
 
   .button {
@@ -1176,8 +1192,23 @@ summary { padding: 13px 16px; color: var(--green); cursor: pointer; font-family:
 */
   const SUPABASE_URL = "https://meinttcgsrdpmghsfmnl.supabase.co";
     const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_1v7HQa7L_2e6xiek_a6ZqQ_ksP33ccg";
-const PAST_OFFENSIVE_PLAYS = 35;
+const PAST_OFFENSIVE_PLAYS = 71;
 const SPOTS = ["A", "B", "C", "D", "E"];
+
+// Game 1-3 の過去スタッツ（指定値）
+const COACH_PLAYERS = [
+  { name: "Grant",    qb: 20, carry: 4, touch: 24 },
+  { name: "John",     qb: 12, carry: 5, touch: 17 },
+  { name: "Harris",   qb: 9,  carry: 6, touch: 15 },
+  { name: "Mason",    qb: 8,  carry: 4, touch: 12 },
+  { name: "Max",      qb: 6,  carry: 5, touch: 11 },
+  { name: "Jaxon",    qb: 6,  carry: 3, touch: 9 },
+  { name: "George",   qb: 1,  carry: 8, touch: 9 },
+  { name: "Leo",      qb: 4,  carry: 3, touch: 7 },
+  { name: "Riku",     qb: 2,  carry: 5, touch: 7 },
+  { name: "Harrison", qb: 1,  carry: 4, touch: 5 },
+  { name: "Camden",   qb: 1,  carry: 4, touch: 5 }
+];
 
 const TEXT = {
   ja: {
@@ -1199,7 +1230,7 @@ const TEXT = {
     membershipMissing: "このアカウントはチームに登録されていません。Supabaseのteam_membersを確認してください。",
 
     seasonTitle: "全試合サマリー",
-    seasonHelp: "過去35プレーの集計と、このツールで記録した全試合分です。",
+    seasonHelp: "Game 1-3 の集計と、このツールで記録した Game 4 以降の試合分です。",
     playerCount: "{count}人",
     teamQB: "チーム QB機会",
     teamCarry: "チーム ボール運び機会",
@@ -1207,13 +1238,13 @@ const TEXT = {
     candidatesTitle: "次に機会を回したい選手",
     qbOpp: "Quarter Back opportunities",
     carryOpp: "All carrying opportunities",
-    touches: "タッチ",
+    touches: "Touches",
     allTied: "全員同数：{count}",
     range: "最少 {min} ／ 最多 {max}",
     candidates: "候補：{names}",
     noPlayers: "選手が登録されていません。",
-    unassignedQB: "過去のQB機会で未割当：{count}回",
-    noUnassigned: "過去のQB機会は35回で、全員分が集計されています。",
+    unassignedQB: "Game 1-3のQB機会で未割当：{count}回",
+    noUnassigned: "Game 1-3のQB機会は71回で、全員分が集計されています。",
     summaryCaption: "黄色の数字は、その機会数が最少の選手です。",
     player: "選手",
     medals: "メダル",
@@ -1235,13 +1266,13 @@ const TEXT = {
     switchGame: "別の試合日",
     back: "← 全試合サマリー",
 
-    pastTotalsTitle: "過去35プレーの数字",
-    pastTotalsHelp: "コーチから受け取った選手別の数字です。修正した場合は保存してください。",
+    pastTotalsTitle: "Game 1-3（過去3試合）の数字",
+    pastTotalsHelp: "Game 1-3の選手別数字です。修正した場合は保存してください。",
     pastQB: "過去 QB機会",
     pastCarry: "過去 ボール運び機会",
     savePast: "過去の数字を保存",
     pastSaved: "過去の数字を保存しました。",
-    pastMatch: "QB機会合計 {sum}回は、過去{plays}プレーと一致しています。",
+    pastMatch: "QB機会合計 {sum}回は、Game 1-3の集計 {plays}回と一致しています。",
     pastGap: "QB機会は{sum}回です。残り{gap}回は未割当です。",
     pastOver: "QB機会合計が過去プレー数を{extra}回上回っています。数字を確認してください。",
     pastCarryTotal: "過去のボール運び機会合計：{sum}回。",
@@ -1258,7 +1289,7 @@ const TEXT = {
     playerAdded: "選手を追加しました。",
 
     daySummary: "この日の集計",
-    pastNotByDay: "過去35プレーの内訳は日付が分からないため、日別の数字には含めていません。",
+    pastNotByDay: "Game 1-3の数値は日別の内訳が分からないため、日別の数字には含めていません。",
     dayPlays: "記録したプレー",
     dayQB: "QB機会",
     dayCarry: "ボール運び機会",
@@ -1349,7 +1380,7 @@ const TEXT = {
     membershipMissing: "This account is not linked to the team. Check team_members in Supabase.",
 
     seasonTitle: "All-games summary",
-    seasonHelp: "Historical totals from 35 plays plus all plays recorded in this tool.",
+    seasonHelp: "Historical totals from Games 1-3 plus all plays recorded in Game 4 onwards.",
     playerCount: "{count} players",
     teamQB: "Team QB opportunities",
     teamCarry: "Team carrying opportunities",
@@ -1362,8 +1393,8 @@ const TEXT = {
     range: "Fewest {min} / most {max}",
     candidates: "Candidates: {names}",
     noPlayers: "No players are registered.",
-    unassignedQB: "Unassigned past QB opportunities: {count}",
-    noUnassigned: "All 35 past QB opportunities are accounted for.",
+    unassignedQB: "Unassigned QB opportunities from Games 1-3: {count}",
+    noUnassigned: "All 71 QB opportunities from Games 1-3 are accounted for.",
     summaryCaption: "Yellow marks the lowest count for that opportunity.",
     player: "Player",
     medals: "Medals",
@@ -1385,13 +1416,13 @@ const TEXT = {
     switchGame: "Switch game day",
     back: "← All-games summary",
 
-    pastTotalsTitle: "Totals from past 35 plays",
-    pastTotalsHelp: "Historical player totals from the coach. Save any corrections.",
+    pastTotalsTitle: "Totals from Games 1-3",
+    pastTotalsHelp: "Historical player totals from Games 1-3. Save any corrections.",
     pastQB: "Past QB opportunities",
     pastCarry: "Past carrying opportunities",
     savePast: "Save historical totals",
     pastSaved: "Historical totals saved.",
-    pastMatch: "QB total {sum}, matching the {plays} past plays.",
+    pastMatch: "QB total {sum}, matching the {plays} historical plays from Games 1-3.",
     pastGap: "QB total is {sum}. The remaining {gap} opportunities are unassigned.",
     pastOver: "QB total exceeds the past play count by {extra}. Please check the totals.",
     pastCarryTotal: "Past carrying opportunities total: {sum}.",
@@ -1408,7 +1439,7 @@ const TEXT = {
     playerAdded: "Player added.",
 
     daySummary: "This day's summary",
-    pastNotByDay: "The past 35 plays are not assigned to dates, so they are excluded from daily totals.",
+    pastNotByDay: "Game 1-3 totals are not assigned to dates, so they are excluded from daily totals.",
     dayPlays: "Plays recorded",
     dayQB: "QB opportunities",
     dayCarry: "Carrying opportunities",
@@ -1612,10 +1643,11 @@ function getGame(id = app.currentGameId) {
 function cloneHistorical(source) {
   const copy = {};
   app.players.forEach(player => {
-    const row = source[player.id] || { qb: 0, carry: 0 };
+    const row = source[player.id] || { qb: 0, carry: 0, touch: 0 };
     copy[player.id] = {
       qb: Number(row.qb) || 0,
-      carry: Number(row.carry) || 0
+      carry: Number(row.carry) || 0,
+      touch: Number(row.touch) || 0
     };
   });
   return copy;
@@ -1680,7 +1712,11 @@ function medalCounts() {
 }
 
 function touchCounts() {
-  const result = new Map(app.players.map(player => [player.id, 0]));
+  const result = new Map();
+
+  app.players.forEach(player => {
+    result.set(player.id, historicalValue(player.id, "touch"));
+  });
 
   allPlays().forEach(play => {
     const touched = Array.isArray(play.touched_player_ids)
@@ -1795,7 +1831,7 @@ function renderSeasonSummary() {
     (sum, player) => sum + historicalValue(player.id, "qb"),
     0
   );
-  const unassigned = Math.max(0, 35 - pastQBTotal);
+  const unassigned = Math.max(0, 71 - pastQBTotal);
 
   $("#unassigned-qb").textContent = unassigned
     ? t("unassignedQB", { count: unassigned })
@@ -1821,13 +1857,13 @@ function renderSeasonSummary() {
   const head = document.createElement("thead");
   const header = document.createElement("tr");
 
+  // カラム順: Player, QB, Carry, Medals, Touches (一番右にTouches)
   [
     t("player"),
     t("qbOpp"),
     t("carryOpp"),
-    t("touches"),
     t("medals"),
-    t("summary")
+    t("touches")
   ].forEach(label => header.append(el("th", "", label)));
 
   head.append(header);
@@ -1842,7 +1878,13 @@ function renderSeasonSummary() {
     const tch = touches.get(player.id) || 0;
     const row = document.createElement("tr");
 
-    row.append(el("td", "name-cell", player.name));
+    // 選手名をテキストリンクにし、クリックでopenProfileを呼ぶ
+    const nameTd = el("td", "name-cell");
+    const nameBtn = el("button", "name-link", player.name);
+    nameBtn.type = "button";
+    nameBtn.addEventListener("click", () => openProfile(player.id));
+    nameTd.append(nameBtn);
+    row.append(nameTd);
 
     // QBセル
     const qCell = el("td", "", String(q));
@@ -1862,18 +1904,11 @@ function renderSeasonSummary() {
     }
     row.append(cCell);
 
-    // Touchesセル
-    row.append(el("td", "", String(tch)));
-
     // Medalsセル
     row.append(el("td", "", String(m)));
 
-    const action = document.createElement("td");
-    const button = el("button", "button button-secondary summary-button", t("summary"));
-    button.type = "button";
-    button.addEventListener("click", () => openProfile(player.id));
-    action.append(button);
-    row.append(action);
+    // Touchesセル（一番右）
+    row.append(el("td", "", String(tch)));
 
     body.append(row);
   });
@@ -1885,9 +1920,8 @@ function renderSeasonSummary() {
   totalRow.append(el("th", "", t("teamTotal")));
   totalRow.append(el("td", "", String(qbTotal)));
   totalRow.append(el("td", "", String(carryTotal)));
-  totalRow.append(el("td", "", String(touchTotal)));
   totalRow.append(el("td", "", String(medalTotal)));
-  totalRow.append(el("td", "", ""));
+  totalRow.append(el("td", "", String(touchTotal)));
   foot.append(totalRow);
   table.append(foot);
 
@@ -2025,17 +2059,17 @@ function renderHistoricalAudit() {
     0
   );
 
-  if (pastQB === 35) {
-    $("#qb-audit").textContent = t("pastMatch", { sum: pastQB, plays: 35 });
+  if (pastQB === 71) {
+    $("#qb-audit").textContent = t("pastMatch", { sum: pastQB, plays: 71 });
     $("#qb-audit").className = "notice good";
-  } else if (pastQB < 35) {
+  } else if (pastQB < 71) {
     $("#qb-audit").textContent = t("pastGap", {
       sum: pastQB,
-      gap: 35 - pastQB
+      gap: 71 - pastQB
     });
     $("#qb-audit").className = "notice";
   } else {
-    $("#qb-audit").textContent = t("pastOver", { extra: pastQB - 35 });
+    $("#qb-audit").textContent = t("pastOver", { extra: pastQB - 71 });
     $("#qb-audit").className = "notice";
   }
 
@@ -2167,7 +2201,7 @@ function renderDaySummary(game) {
     if (qbMin < qbMax && q === qbMin) qCell.classList.add("low");
     row.append(qCell);
 
-    // Carryセル (QB機会0の選手のみ、最少1位のみハイライト)
+    // Carryセル (QB機会0の選手のみ、最少のみハイライト)
     const cCell = el("td", "", String(c));
     if (q === 0 && carryMin !== null && carryMax !== null && carryMin < carryMax && c === carryMin) {
       cCell.classList.add("low");
