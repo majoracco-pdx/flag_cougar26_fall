@@ -148,7 +148,7 @@ td.name-cell, th.name-cell { text-align: left; }
 /* 最少1位：黄色ハイライト */
 td.low { color: var(--green-dark); background: #fff2a5; font-weight: 800; }
 /* 最少2位：オレンジハイライト */
-td.low-orange { color: #7c4300; background: #ffe0b2; font-weight: 400; }
+td.low-orange { color: #7c3a00; background: #ffe0b2; font-weight: 400; }
 
 tfoot th, tfoot td { border-top: 2px solid var(--green); background: var(--pale); font-weight: 800; }
 .caption { padding: 6px 3px; color: var(--muted); text-align: left; font-size: 12px; }
@@ -2717,7 +2717,18 @@ async function loadCloudData({ silent = false } = {}) {
 
     (results[3].data || []).forEach(play => {
       const game = gameById.get(play.game_id);
-      if (game) game.plays.push(play);
+      if (game) {
+        // Game 5 (2026-10-11) のディフェンス記録を削除し、初期値のみにする
+        if (game.game_number === 5 || game.game_date === '2026-10-11') {
+          if (play.lineup?._defense) {
+            play.lineup._defense = { flag_pull: null, pass_block: null, interception: null };
+          }
+          if (play.lineup?.defense) {
+            play.lineup.defense = { flag_pull: null, pass_block: null, interception: null };
+          }
+        }
+        game.plays.push(play);
+      }
     });
 
     (results[4].data || []).forEach(award => {
